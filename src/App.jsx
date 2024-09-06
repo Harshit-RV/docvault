@@ -1,34 +1,22 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import TestPage from './pages/TestPage';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<TestPage />} />
+          {/* <Route path='/login' element={<Login />} />
+          <Route path='/signup' element={<Signup />} />
+          <Route path='/workflow' element={<WorkFlow />} />
+          <Route path='/auction' element={<Auction />} />
+          <Route path="/myworks" element={<Myworks />} />
+          <Route path="/mynfts" element={<MyNFTs />} />
+          <Route path="/payments" element={<Payments />} />
+          <Route path="/approvals" element={<Approvals />} />
+          <Route path="/myworks_admin" element={<Myworks_admin />} /> */}
+        </Routes>
+    </BrowserRouter>
   )
 }
 
