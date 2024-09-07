@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import TestPage from './pages/TestPage';
+import Login from './Login';
+import SignUp from './SignUp';
 
 function App() {
   return (
@@ -7,8 +9,10 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<TestPage />} />
-          {/* <Route path='/login' element={<Login />} />
-          <Route path='/signup' element={<Signup />} />
+          <Route path='/login' element={<Login />}/>
+          <Route path='/signup' element={<SignUp />} />
+          {/* />
+        
           <Route path='/workflow' element={<WorkFlow />} />
           <Route path='/auction' element={<Auction />} />
           <Route path="/myworks" element={<Myworks />} />
