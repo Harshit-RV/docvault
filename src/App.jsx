@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import TestPage from './pages/TestPage';
 import MyFiles from './pages/MyFiles';
 import VerifyDocs from './pages/VerifyDocs';
+import Login from './Login';
+import SignUp from './SignUp';
 import MyOrgs from './pages/MyOrgs';
 
 function App() {
@@ -12,6 +14,10 @@ function App() {
           <Route path='/' element={<TestPage />} />
           <Route path="/myfiles" element={<MyFiles />} />
           <Route path="/verifydocs" element={<VerifyDocs />} />
+          <Route path='/login' element={<Login />}/>
+          <Route path='/signup' element={<SignUp />} />
+          {/* />
+        
           <Route path="/myorgs" element={<MyOrgs />} />
           {/* <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
