@@ -16,9 +16,9 @@ function App() {
           <Route path="/verifydocs" element={<VerifyDocs />} />
           <Route path='/login' element={<Login />}/>
           <Route path='/signup' element={<SignUp />} />
+          <Route path="/myorgs" element={<MyOrgs />} />
           {/* />
         
-          <Route path="/myorgs" element={<MyOrgs />} />
           {/* <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/workflow' element={<WorkFlow />} />

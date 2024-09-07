@@ -49,13 +49,13 @@ const handleFileChange = (event) => {
             </button>
             {popup && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-gray-100 p-6 w-96 rounded-lg">
+            <div className="bg-gray-200 p-6 w-96 rounded-lg">
               <div className="flex mb-8 gap-2">
                 <button
                   className={`w-1/2 py-2 rounded-md ${
                     popupTab === "requestNewFile"
-                      ? "bg-[#27E8A7] text-black font-medium text-[15px]"
-                      : "bg-gray-200 font-medium text-[15px]"
+                      ? "bg-[#402530] text-white font-medium text-[15px]"
+                      : "bg-gray-300 font-medium text-[15px]"
                   }`}
                   onClick={() => handlePopupTabChange("requestNewFile")}
                 >
@@ -64,8 +64,8 @@ const handleFileChange = (event) => {
                 <button
                   className={`w-1/2 py-2 rounded-md ${
                     popupTab === "requestVerification"
-                      ? "bg-[#27E8A7] text-black font-medium text-[15px]"
-                      : "bg-gray-200 font-medium text-[15px]"
+                      ? "bg-[#402530] text-white font-medium text-[15px]"
+                      : "bg-gray-300 font-medium text-[15px]"
                   }`}
                   onClick={() => handlePopupTabChange("requestVerification")}
                 >
@@ -75,7 +75,7 @@ const handleFileChange = (event) => {
 
               {popupTab === "requestNewFile" && (
                 <form>
-                  <div className="mb-6">
+                  <div className="mb-8">
                     <label className="block text-gray-700 font-semibold">Document Type</label>
                     <select className="w-full border border-gray-300 p-2 mt-2 rounded">
                       <option value="">Select Document</option>
@@ -88,7 +88,7 @@ const handleFileChange = (event) => {
                     </select>
                   </div>
 
-                  <div className="mb-4">
+                  <div className="mb-20">
                     <label className="block text-gray-700 font-semibold">Organization</label>
                     <select className="w-full border border-gray-300 p-2 mt-2 rounded">
                       <option value="">Select Organization</option>
@@ -108,7 +108,7 @@ const handleFileChange = (event) => {
                     </button>
                     <button
                       type="submit"
-                      className="bg-[#402530] text-white px-4 py-2 rounded"
+                      className="bg-primaryGreen text-black font-medium px-4 py-2 rounded"
                     >
                       Request
                     </button>
@@ -143,7 +143,7 @@ const handleFileChange = (event) => {
                     </button>
                     <button
                       type="submit"
-                      className="bg-[#402530] text-white px-4 py-2 rounded"
+                      className="bg-primaryGreen text-black font-medium px-4 py-2 rounded"
                     >
                       Submit
                     </button>
