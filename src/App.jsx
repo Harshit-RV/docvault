@@ -1,13 +1,14 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import TestPage from './pages/TestPage';
+import Firepage from './pages/Firepage';
 
 function App() {
   return (
     <BrowserRouter>
         <Routes>
           <Route path='/' element={<TestPage />} />
-          {/* <Route path='/login' element={<Login />} />
-          <Route path='/signup' element={<Signup />} />
+          <Route path='/test' element={<Firepage />} />
+           {/* <Route path='/signup' element={<Signup />} />
           <Route path='/workflow' element={<WorkFlow />} />
           <Route path='/auction' element={<Auction />} />
           <Route path="/myworks" element={<Myworks />} />
