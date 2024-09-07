@@ -4,6 +4,7 @@ import MyFiles from './pages/MyFiles';
 import VerifyDocs from './pages/VerifyDocs';
 import Login from './Login';
 import SignUp from './SignUp';
+import MyOrgs from './pages/MyOrgs';
 import Certificate from './pages/Certificate';
 
 function App() {
@@ -21,13 +22,16 @@ function App() {
           
           {/* />
         
+          <Route path="/myorgs" element={<MyOrgs />} />
+          {/* <Route path='/login' element={<Login />} />
+          <Route path='/signup' element={<Signup />} />
           <Route path='/workflow' element={<WorkFlow />} />
           <Route path='/auction' element={<Auction />} />
           
           
           <Route path="/payments" element={<Payments />} />
           <Route path="/approvals" element={<Approvals />} />
-          <Route path="/myworks_admin" element={<Myworks_admin />} /> */}
+          } */}
         </Routes>
     </BrowserRouter>
   
