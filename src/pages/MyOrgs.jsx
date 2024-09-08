@@ -4,8 +4,9 @@ import 'react-toastify/dist/ReactToastify.css'
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { LogOutIcon, LogInIcon, PlusIcon } from 'lucide-react'
-import { requestToJoinOrgMethod, getUserNameMethod } from "../contract/vault/methods"
+import { requestToJoinOrgMethod, getUserOrganizationsMethod, getOrgNameMethod } from "../contract/vault/methods"
 import { useQuery } from 'react-query'
+import { useNavigate } from 'react-router-dom'
 import {
   Dialog,
   DialogContent,
@@ -17,50 +18,47 @@ import {
 import useWallet from '@/hooks/useWallet';
 
 export default function Component() {
-  const { address, signer } = useWallet(); 
+  const { address } = useWallet(); 
 
-  const [ address2, setAddress ] = useState('')
+  const [ orgAddress, setOrgAddress ] = useState('')
   const [ message, setMessage ] = useState('')
 
   const [selectedOrg, setSelectedOrg] = useState(null)
 
-  const [organizations, setOrganizations] = useState([
-    { name: 'Acme Corp', address: '0x1234...5678' },
-    { name: 'TechNova', address: '0xabcd...efgh' },
-    { name: 'Green Energy', address: '0x9876...5432' },
-    { name: 'Future Finance', address: '0xijkl...mnop' },
-  ]);
-
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleJoin = async () => {
+    if (!orgAddress || orgAddress == "") {
+      toast.error('Please enter a valid organization address.');
+      return;
+    }
+    if (!message || message == "") {
+      toast.error('Please enter a message.');
+      return;
+    }
+
     if (address) {
-      // 0xDfCDbf47c708949c53Db81041381a580462bc582
-      await requestToJoinOrgMethod(address, '0xDfCDbf47c708949c53Db81041381a580462bc582', 'really want to join this room')
+      await requestToJoinOrgMethod(address, orgAddress, message)
       toast.success("Successfully joined the organization!")
     } else {
       toast.error('Please enter a valid wallet address.');
     }
   };
 
-  const handleLeave = () => {
-    const updatedOrganizations = organizations.filter(org => org !== selectedOrg)
-    setOrganizations(updatedOrganizations)
-    toast.info("You have left the organization.")
+  const fetchOrgs = async () => {
+    const result = await getUserOrganizationsMethod(address);
+    console.log('result', result);
+    return result;
   }
 
-  // const fetchList = async () => {
-  //     const token = await getToken();
-  //     if (!token) return;
-  //     return await getList(token);
-  // }
+  const { data: orgs, isLoading: orgsLoading, refetch: refetchOrgs } = useQuery('user-orgs', fetchOrgs);
 
-  // const { data: orgs, isLoading: orgsLoading, refetch: refetchOrgs } = useQuery('events', fetchOrgs);
 
   return (
     <div className="min-h-screen bg-primaryBlack p-16">
       <div className="flex justify-between items-center mb-14 px-12">
-        <h1 className="text-white font-bold text-3xl">My Organizations {address}</h1>
+        <h1 className="text-white font-bold text-2xl">My Organizations</h1>
+        <p>{address}</p>
         <Dialog>
           <DialogTrigger>
             <Button 
@@ -77,8 +75,8 @@ export default function Component() {
                   type="text" 
                   placeholder="Organization's Address" 
                   className="w-full p-2 mb-4 border border-gray-600 bg-gray-700 text-white rounded focus:outline-none focus:border-primaryColor" 
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)} 
+                  value={orgAddress}
+                  onChange={(e) => setOrgAddress(e.target.value)} 
                 />
                 <input 
                   type="text" 
