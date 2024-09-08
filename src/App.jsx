@@ -33,15 +33,6 @@ function App() {
           <Route path='/copy' element={<Copy/>}/>
           <Route path="/uploadImage" element={<UploadImage/>}/>
           <Route path='/ipfshash' element={<IpfsHash/>}/>
-          {/* />
-        
-          {/* <Route path='/login' element={<Login />} />
-          <Route path='/signup' element={<Signup />} />
-          <Route path='/workflow' element={<WorkFlow />} />
-          <Route path='/auction' element={<Auction />} />
-          <Route path="/payments" element={<Payments />} />
-          <Route path="/approvals" element={<Approvals />} />
-          } */}
         </Routes>
     </BrowserRouter>
     </div>
