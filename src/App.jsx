@@ -12,6 +12,7 @@ import Members from './pages/Members';
 import Copy from './copy';
 import UploadImage from './pages/UploadImage'
 import Header from './pages/Header';
+import IpfsHash from './pages/ipfshash'
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path='/members' element={<Members />} />
           <Route path='/copy' element={<Copy/>}/>
           <Route path="/uploadImage" element={<UploadImage/>}/>
+          <Route path='/ipfshash' element={<IpfsHash/>}/>
           {/* />
         
           {/* <Route path='/login' element={<Login />} />
