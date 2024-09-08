@@ -3,7 +3,7 @@ import { connectToGanache, connectToSepolia }  from './walletAdapter'
 
 export const connectWallet = async (role) => {
   try {
-    await connectToSepolia();
+    await connectToGanache();
     const currentProvider = detectCurrentProvider();
     if (currentProvider) {
       await currentProvider.request({ method: 'eth_requestAccounts' });
@@ -12,9 +12,11 @@ export const connectWallet = async (role) => {
       const account = userAccount[0];
       localStorage.setItem('walletAddress', account); // Store wallet address in local storage
       console.log(`Connected wallet: ${account}, Role: ${role}`);
+      return account;
     }
   } catch (err) {
     console.log(err);
+    return null;
   }
 };
 
@@ -32,7 +34,7 @@ const detectCurrentProvider = () => {
 
 export const getBalance = async (account) => {
     try {
-        await connectToSepolia();
+        await connectToGanache();
         const currentProvider = detectCurrentProvider();
         if (currentProvider) {
           const web3 = new Web3(currentProvider);

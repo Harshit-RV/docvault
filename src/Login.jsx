@@ -1,11 +1,13 @@
 import { useNavigate } from 'react-router-dom'
-import Web3 from 'web3';
 import {useState} from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import { connectWallet } from '@/utils/connectWallet'
+import { registerUserMethod, getUserNameMethod, getOrgNameMethod, registerOrganisationMethod } from '@/contract/vault/methods'
 
 function Login() {
-    const navigate = useNavigate();
-    
-
   return (
     <div>
     <div className='h-screen w-full grid md:grid-cols-7 grid-cols-2'>
@@ -34,34 +36,140 @@ function Login() {
             <h1 className='text-5xl font-bold text-primaryGray p-3'>docVault</h1>
           </div>
           <div className='flex flex-col gap-2 text-center'>
-            <button 
-              type="button" 
-             
-              className="w-60 py-3 px-5 mt-10 text-sm font-medium rounded-xl border focus:z-10 focus:ring-4 focus:ring-gray-100 bg-primaryBlack text-white border-gray-600 hover:bg-gray-700"
-            >
-              Login As User
-            </button>
-            <button 
-              type="button" 
- 
-              className="w-60 py-3 px-5 mt-4 text-sm font-medium rounded-xl border focus:z-10 focus:ring-4 focus:ring-gray-100 bg-primaryBlack text-white border-gray-600 hover:bg-gray-700"
-            >
-              Login As Organisation
-            </button>
-       
-            <div 
-         
-              className='font-semibold mt-4 text-base hover:cursor-pointer hover:underline'
-              onClick={() => navigate('/signup')}
-            >
-              Not registered? Sign Up.
-            </div>
+
+            <Tabs defaultValue="user" className="w-96">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="user">User</TabsTrigger>
+                <TabsTrigger value="organization">Organization</TabsTrigger>
+              </TabsList>
+              <TabsContent value="user">
+                <UserForm />
+              </TabsContent>
+              <TabsContent value="organization">
+                <OrganizationForm />
+              </TabsContent>
+            </Tabs>
+            
           </div>
         </div>
       </div>
     </div>
   </div>
   
+  )
+}
+
+function UserForm() {
+
+  const [ name, setName ] = useState('');
+  
+  const handleConnect = async (isSignUp) => {
+    const account = await connectWallet();
+    console.log(account);
+    if (!account) return;
+    // TODO: add toast here
+    
+    if (isSignUp) {
+      console.log('signing up');
+      registerUserMethod(account, name);
+      localStorage.setItem('role', 'user');
+    }
+
+    if (!isSignUp) {
+      const name = getUserNameMethod(account, account);
+      if (name == null) {
+        console.log('User not registered');
+        // TODO: add toast here
+        return;
+      }
+    }
+  }
+
+  return (
+    <div className='flex flex-col gap-4 mt-4'>
+      <Input 
+        type="text" 
+        placeholder="Name" 
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        className="w-full p-3 bg-gray-800 text-white rounded-md border-none outline-none focus:ring-2 focus:ring-primaryBlack"
+      />
+      <Button 
+        onClick={() => handleConnect(true)}
+        className="w-full py-3 px-5 text-sm font-medium rounded-xl border focus:z-10 focus:ring-4 focus:ring-gray-100 bg-primaryBlack text-white border-gray-600 hover:bg-gray-700"
+      >
+        Connect and Sign Up
+      </Button>
+      <div className="relative">
+        <Separator className="my-4" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="bg-white px-2 text-gray-500 text-sm">OR</span>
+        </div>
+      </div>
+      <Button 
+        variant="outline"
+        onClick={() => handleConnect(false)}
+        className="w-full py-3 px-5 text-sm font-medium rounded-xl border focus:z-10 focus:ring-4 focus:ring-gray-100 bg-white text-primaryBlack border-gray-300 hover:bg-gray-100"
+      >
+        Connect and Sign In
+      </Button>
+    </div>
+  )
+}
+
+function OrganizationForm() {
+  const [ name, setName ] = useState('');
+  
+  const handleConnect = async (isSignUp) => {
+    const account = await connectWallet();
+    console.log(account);
+    if (!account) return;
+    // TODO: add toast here
+    
+    if (isSignUp) {
+      console.log('signing up');
+      registerOrganisationMethod(account, name);
+      localStorage.setItem('role', 'org');
+    }
+
+    if (!isSignUp) {
+      const name = getOrgNameMethod(account, account);
+      if (name == null) {
+        console.log('User not registered');
+        // TODO: add toast here
+        return;
+      }
+    }
+  }
+  return (
+    <div className='flex flex-col gap-4 mt-4'>
+      <Input 
+        type="text" 
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Organization Name" 
+        className="w-full p-3 bg-gray-800 text-white rounded-md border-none outline-none focus:ring-2 focus:ring-primaryBlack"
+      />
+      <Button 
+        onClick={() => handleConnect(true)}
+        className="w-full py-3 px-5 text-sm font-medium rounded-xl border focus:z-10 focus:ring-4 focus:ring-gray-100 bg-primaryBlack text-white border-gray-600 hover:bg-gray-700"
+      >
+        Connect and Sign Up
+      </Button>
+      <div className="relative">
+        <Separator className="my-4" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="bg-white px-2 text-gray-500 text-sm">OR</span>
+        </div>
+      </div>
+      <Button 
+        onClick={() => handleConnect(false)}
+        variant="outline"
+        className="w-full py-3 px-5 text-sm font-medium rounded-xl border focus:z-10 focus:ring-4 focus:ring-gray-100 bg-white text-primaryBlack border-gray-300 hover:bg-gray-100"
+      >
+        Connect and Sign In
+      </Button>
+    </div>
   )
 }
 

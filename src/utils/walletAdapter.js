@@ -25,18 +25,18 @@ export const connectToGanache = async () => {
       params: [{ chainId: '0x539' }],
     });
   } catch (switchError) {
-    if (switchError.code === 4902) {
-      try {
-        await ethereum.request({
-          method: 'wallet_addEthereumChain',
-          params: [ganacheNetwork],
-        });
-      } catch (addError) {
-        console.error("Failed to add the network:", addError.message);
-      }
-    } else {
+    // if (switchError.code === 4902) {
+    //   // try {
+    //   //   await ethereum.request({
+    //   //     method: 'wallet_addEthereumChain',
+    //   //     params: [ganacheNetwork],
+    //   //   });
+    //   // } catch (addError) {
+    //   //   console.error("Failed to add the network:", addError.message);
+    //   // }
+    // } else {
       console.error("Failed to switch network:", switchError.message);
-    }
+    // }
   }
 };
 

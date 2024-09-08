@@ -6,7 +6,7 @@ export async function signMessage() {
   const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
 
   // message to sign
-  const message = "hello";
+  const message = "Sign to verify your identity";
   console.log({ message });
 
   const hashedMessage = Web3.utils.sha3(message);
@@ -16,7 +16,6 @@ export async function signMessage() {
     method: "personal_sign",
     params: [hashedMessage, accounts[0]],
   });
-  console.log({ signature });
 
   // split signature
   const r = signature.slice(0, 66);
