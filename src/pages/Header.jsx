@@ -65,7 +65,7 @@ function Header() {
   };
 
   return (
-    <div className="h-12 w-full bg-primaryBlack fixed top-0 flex justify-between items-center md:px-12 py-6 text-white z-30">
+    <div className="h-12 w-full bg-primaryBlack fixed top-0 flex justify-between items-center md:px-12 py-6 text-white">
       <div className="hover:cursor-pointer text-[10px] md:text-[20px] text-primaryGreen font-semibold">docVault</div>
 
       {/* Desktop Menu */}
