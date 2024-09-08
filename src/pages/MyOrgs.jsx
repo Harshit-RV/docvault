@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
@@ -51,14 +51,14 @@ export default function Component() {
     return result;
   }
 
-  const { data: orgs, isLoading: orgsLoading, refetch: refetchOrgs } = useQuery('user-orgs', fetchOrgs);
+  const { data: orgs, isLoading: orgsLoading, refetch: refetchOrgs } = useQuery('user-orgs2', fetchOrgs);
 
 
   return (
-    <div className="min-h-screen bg-primaryBlack p-16">
+    <div className="min-h-screen bg-gray-900 p-16">
       <div className="flex justify-between items-center mb-14 px-12">
         <h1 className="text-white font-bold text-2xl">My Organizations</h1>
-        <p>{address}</p>
+        <p className='text-white'>{address}</p>
         <Dialog>
           <DialogTrigger>
             <Button 
@@ -101,61 +101,65 @@ export default function Component() {
 
       <Button onClick={handleJoin}> handle join </Button>
 
-      {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 px-12">
-        {organizations.map((org, index) => (
-          <Card
-            key={index}
-            className="bg-gray-800 text-white border border-gray-700 flex flex-col justify-between h-[250px]"
-          >
-            <CardContent className="pt-6">
-              <h2 className="text-3xl font-semibold mb-4">{org.name}</h2>
-              <p className="text-md text-gray-400">{org.address}</p>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-             
-              <Dialog>
-                <DialogTrigger>
-                  <Button 
-                    onClick={() => setSelectedOrg(org)}
-                    variant="outline" 
-                    size="sm" 
-                    className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-                  >
-                    <LogOutIcon className="mr-2 h-4 w-4" /> Leave
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="bg-gray-900 border-none text-white py-7 px-8">
-                  <DialogHeader>
-                    <DialogTitle className="mb-2 text-xl">Leave Organisation</DialogTitle>
-                    <DialogDescription>
-                      <p className="text-gray-300 mb-4">Are you sure you want to leave {selectedOrg.name}?</p>
-                      <div className="flex justify-end">
-                        <Button 
-                          onClick={handleLeave}
-                          className="bg-red-500 text-white font-medium hover:bg-red-600 transition-colors"
-                        >
-                          Leave
-                        </Button>
-                      </div>
-                    </DialogDescription>
-                  </DialogHeader>
-                </DialogContent>
-              </Dialog>
-
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => handleEnter(org)}
-                className="border-emerald-500 bg-emerald-500 text-white font-bold hover:bg-emerald-500 hover:text-white"
-              >
-                <LogInIcon className="mr-2 h-4 w-4" /> Enter
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </div> */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 px-12">
+        {
+          orgsLoading && (
+            <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
+              <span className='font-bold text-2xl'>Loading...</span>
+            </div>
+          ) 
+        }
+        {
+          orgsLoading || orgs === undefined 
+          ? <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
+              <span className='font-bold text-2xl'>Loading...</span>
+            </div>
+          : orgs.length === 0
+            ? (
+              <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
+                <span className='font-bold text-2xl'>No organisations joined</span>
+              </div>
+            ): (
+              orgs.map((org, index) => (
+                <OrgElement key={index} orgAddress={org} />
+              ))
+            )
+        }
+        <OrgElement orgAddress={'0x885690e5893bE8Be6EdE0A0339Cb89138a485AeC'} />
+        <OrgElement orgAddress={'0x885690e5893bE8Be6EdE0A0339Cb89138a485AeC'} />
+        <OrgElement orgAddress={'0x885690e5893bE8Be6EdE0A0339Cb89138a485AeC'} />
+        <OrgElement orgAddress={'0x885690e5893bE8Be6EdE0A0339Cb89138a485AeC'} />
+      </div>
 
       <ToastContainer />
     </div>
   );
+}
+
+const OrgElement = ({ orgAddress }) => {
+  const { address } = useWallet(); 
+
+  const [ name, setName ] = useState('');
+
+  const getNameFromAddress = async () => {
+    const name2 = await getOrgNameMethod(address, orgAddress);
+    setName(name2);
+  }
+
+  useEffect(() => {
+    getNameFromAddress();
+  },[]);
+
+  return (
+    <Card
+      className="bg-gray-800 text-white border border-gray-700 flex flex-col justify-between h-[250px]"
+    >
+      <CardContent className="pt-6">
+        <h2 className="text-3xl font-semibold mb-4">{name}</h2>
+        <p className="text-md text-gray-400">({String(orgAddress).slice(0, 10)}...)</p>
+      </CardContent>
+      <CardFooter className="flex justify-between">
+      </CardFooter>
+    </Card>
+  )
 }

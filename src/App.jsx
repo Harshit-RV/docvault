@@ -12,11 +12,13 @@ import Members from './pages/Members';
 import Copy from './copy';
 // import UploadImage from './pages/UploadImage'
 import Header from './pages/Header';
+import IpfsHash from './pages/ipfshash'
 
 function App() {
   return (
+    <div className='flex flex-col'>
       <BrowserRouter>
-                <Header/>
+        <Header/>
 
         <Routes>
           <Route path='/' element={<TestPage />} />
@@ -26,9 +28,10 @@ function App() {
           <Route path='/certificate' element={<Certificate />} />
           <Route path="/myorgs" element={<MyOrgs />} />
           <Route path='/requests' element={<Requests />} />
-          <Route path="/org/:orgName" element={<OrgPage/>} />
+          <Route path="/org/:orgAddress" element={<OrgPage/>} />
           <Route path='/members' element={<Members />} />
           <Route path='/copy' element={<Copy/>}/>
+<<<<<<< HEAD
           {/* <Route path="/uploadImage" element={<UploadImage/>}/> */}
           {/* />
         
@@ -39,8 +42,13 @@ function App() {
           <Route path="/payments" element={<Payments />} />
           <Route path="/approvals" element={<Approvals />} />
           } */}
+=======
+          <Route path="/uploadImage" element={<UploadImage/>}/>
+          <Route path='/ipfshash' element={<IpfsHash/>}/>
+>>>>>>> b6697161593063f885d5a8351c7fa7e20fd66a33
         </Routes>
     </BrowserRouter>
+    </div>
   )
 }
 

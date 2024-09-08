@@ -8,24 +8,15 @@ import './header.css';
 function Header() {
   const [toggleMenu, setToggleMenu] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const [userRole, setUserRole] = useState(localStorage.getItem('role')); // Initialize userRole from localStorage using 'role' key
+  const [userRole, setUserRole] = useState(localStorage.getItem('role'));
   const navigate = useNavigate();
-  const location = useLocation(); // Get the current location
-
+  const location = useLocation();
+  
   useEffect(() => {
-    const handleStorageChange = () => {
-      const role = localStorage.getItem('role');
-      setUserRole(role);
-    };
-
-    // Listen for changes in localStorage
-    window.addEventListener('storage', handleStorageChange);
-
-    // Clean up the event listener
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
+    console.log('updating');
+    const role = localStorage.getItem('role');
+    setUserRole(role);
+  });
 
   const handleMenuClose = () => {
     setIsClosing(true);
@@ -35,7 +26,6 @@ function Header() {
     }, 300);
   };
 
-  // Helper function to check if the current route matches the given path
   const isActive = (path) => (location.pathname === path ? 'active' : '');
 
   // Menu items based on userRole
@@ -47,16 +37,14 @@ function Header() {
             <div className={`hover:cursor-pointer ${isActive('/myfiles')}`} onClick={() => navigate('/myfiles')}>All Files</div>
             <div className={`hover:cursor-pointer ${isActive('/myorgs')}`} onClick={() => navigate('/myorgs')}>My Organisations</div>
             <div className={`hover:cursor-pointer ${isActive('/verifydocs')}`} onClick={() => navigate('/verifydocs')}>Verify NFTs</div>
-
           </>
         );
       case 'org':
         return (
           <>
-            <div className={`hover:cursor-pointer ${isActive('/')}`} onClick={() => navigate('/')}>Members</div>
-            <div className={`hover:cursor-pointer ${isActive('/')}`} onClick={() => navigate('/')}>Doc Requests</div>
+            <div className={`hover:cursor-pointer ${isActive('/members')}`} onClick={() => navigate('/members')}>Members</div>
+            <div className={`hover:cursor-pointer ${isActive('/requests')}`} onClick={() => navigate('/requests')}>Doc Requests</div>
             <div className={`hover:cursor-pointer ${isActive('/verifydocs')}`} onClick={() => navigate('/verifydocs')}>Verify NFTs</div>
-
           </>
         );
       default:
@@ -65,7 +53,7 @@ function Header() {
   };
 
   return (
-    <div className="h-12 w-full bg-primaryBlack fixed top-0 flex justify-between items-center md:px-12 py-6 text-white z-30">
+    <div className="h-16 w-full bg-gray-800 flex justify-between items-center md:px-12 py-6 text-white">
       <div className="hover:cursor-pointer text-[10px] md:text-[20px] text-primaryGreen font-semibold">docVault</div>
 
       {/* Desktop Menu */}

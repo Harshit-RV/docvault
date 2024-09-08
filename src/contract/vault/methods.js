@@ -139,9 +139,8 @@ export async function addNewDocumentRequestMethod(address, orgAddress, id, title
 
 export async function getUserOrganizationsMethod(address) {
     try {
-      const result = await contract.methods.getUserOrganizations().call({ from: address , gas : 2000000});
+      const result = await contract.methods.getUserOrganizations().call({ from: address , gas : 4000000});
         
-      console.log(result);
         
         return result;
     
