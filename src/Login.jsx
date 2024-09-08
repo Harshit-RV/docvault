@@ -15,7 +15,7 @@ function Login() {
 
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col md:flex-row px-8">
-      <div className="md:w-1/2 flex flex-col justify-center items-center p-8">
+      <div className="md:w-1/2 flex flex-col justify-center items-center p-8 pt-2">
         <img 
           className="rounded-lg shadow-2xl mb-8 max-w-md w-full" 
           src="https://nanonets.com/blog/content/images/2022/06/shutterstock_1785042593.jpg" 
@@ -38,8 +38,16 @@ function Login() {
           <CardContent>
             <Tabs defaultValue="user" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="user" className="data-[state=active]:bg-blue-600 hover:bg-blue-700 text-white">User</TabsTrigger>
-                <TabsTrigger value="organization" className="data-[state=active]:bg-blue-600 hover:bg-blue-700 text-white">Organization</TabsTrigger>
+              <TabsTrigger 
+                value="user" 
+                className="text-black data-[state=active]:text-white data-[state=active]:bg-blue-500">
+                User
+              </TabsTrigger>
+              <TabsTrigger 
+                value="organization" 
+                className="text-black data-[state=active]:text-white data-[state=active]:bg-blue-500">
+                Organization
+              </TabsTrigger>
               </TabsList>
               <TabsContent value="user">
                 <UserForm navigate={navigate} />
@@ -49,7 +57,7 @@ function Login() {
               </TabsContent>
             </Tabs>
           </CardContent>
-          <CardFooter>
+          {/* <CardFooter>
             <p className="text-sm text-gray-400 text-center w-full">
               Not registered?{' '}
               <span 
@@ -59,7 +67,7 @@ function Login() {
                 Sign Up
               </span>
             </p>
-          </CardFooter>
+          </CardFooter> */}
         </Card>
       </div>
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
@@ -129,9 +137,9 @@ function UserForm({ navigate }) {
         </div>
       </div>
       <Button 
-        variant="outline"
+        // variant="outline"
         onClick={() => handleConnect(false)}
-        className="w-full border-gray-600 text-gray-200 hover:bg-gray-700"
+        className="w-full  bg-emerald-600 hover:bg-emerald-700 text-white"
         disabled={isLoading}
       >
         {isLoading ? 'Connecting...' : 'Connect and Sign In'}
@@ -203,8 +211,8 @@ function OrganizationForm({ navigate }) {
       </div>
       <Button 
         onClick={() => handleConnect(false)}
-        variant="outline"
-        className="w-full border-gray-600 text-gray-200 hover:bg-gray-700"
+        // variant="outline"
+        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
         disabled={isLoading}
       >
         {isLoading ? 'Connecting...' : 'Connect and Sign In'}
