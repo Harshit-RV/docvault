@@ -6,11 +6,15 @@ import Login from './Login';
 import SignUp from './SignUp';
 import MyOrgs from './pages/MyOrgs';
 import Certificate from './pages/Certificate';
+import UploadImage from './pages/UploadImage'
+import Header from './pages/Header';
 
 function App() {
   return (
 
       <BrowserRouter>
+                <Header/>
+
         <Routes>
           <Route path='/' element={<TestPage />} />
           <Route path="/myfiles" element={<MyFiles />} />
@@ -19,14 +23,13 @@ function App() {
           <Route path='/signup' element={<SignUp />} />
           <Route path='/certificate' element={<Certificate />} />
           <Route path="/myorgs" element={<MyOrgs />} />
+          <Route path="/uploadImage" element={<UploadImage/>}/>
           {/* />
         
           {/* <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/workflow' element={<WorkFlow />} />
           <Route path='/auction' element={<Auction />} />
-          
-          
           <Route path="/payments" element={<Payments />} />
           <Route path="/approvals" element={<Approvals />} />
           } */}
