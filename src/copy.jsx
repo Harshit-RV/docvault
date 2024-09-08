@@ -7,7 +7,7 @@ import { LogInIcon, Users } from 'lucide-react'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
-export default function Login() {
+export default function Copy() {
   const navigate = useNavigate()
   const [isConnecting, setIsConnecting] = useState(false)
 
