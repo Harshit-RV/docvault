@@ -16,8 +16,9 @@ import IpfsHash from './pages/ipfshash'
 
 function App() {
   return (
+    <div className='flex flex-col'>
       <BrowserRouter>
-                <Header/>
+        <Header/>
 
         <Routes>
           <Route path='/' element={<TestPage />} />
@@ -43,6 +44,7 @@ function App() {
           } */}
         </Routes>
     </BrowserRouter>
+    </div>
   )
 }
 

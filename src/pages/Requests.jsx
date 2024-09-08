@@ -31,7 +31,7 @@ export default function Requests() {
   const { data: requests, isLoading: requestsLoading, refetch: refetchRequests } = useQuery('requests', fetchRequests);
 
   return (
-    <div className='bg-primaryBlack min-h-screen p-8 flex justify-center items-center pt-12'>
+    <div className='bg-gray-900 min-h-screen p-8 flex justify-center items-center pt-12'>
     <div className='w-full max-w-4xl pl-20'>
         <h1 className='text-4xl font-bold text-white mb-16'>Requests</h1>
         <Tabs defaultValue="members" className="w-full">

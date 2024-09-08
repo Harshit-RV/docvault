@@ -55,7 +55,7 @@ export default function Component() {
 
 
   return (
-    <div className="min-h-screen bg-primaryBlack p-16">
+    <div className="min-h-screen bg-gray-900 p-16">
       <div className="flex justify-between items-center mb-14 px-12">
         <h1 className="text-white font-bold text-2xl">My Organizations</h1>
         <p>{address}</p>

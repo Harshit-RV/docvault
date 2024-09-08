@@ -47,16 +47,14 @@ function Header() {
             <div className={`hover:cursor-pointer ${isActive('/myfiles')}`} onClick={() => navigate('/myfiles')}>All Files</div>
             <div className={`hover:cursor-pointer ${isActive('/myorgs')}`} onClick={() => navigate('/myorgs')}>My Organisations</div>
             <div className={`hover:cursor-pointer ${isActive('/verifydocs')}`} onClick={() => navigate('/verifydocs')}>Verify NFTs</div>
-
           </>
         );
       case 'org':
         return (
           <>
-            <div className={`hover:cursor-pointer ${isActive('/')}`} onClick={() => navigate('/')}>Members</div>
-            <div className={`hover:cursor-pointer ${isActive('/')}`} onClick={() => navigate('/')}>Doc Requests</div>
+            <div className={`hover:cursor-pointer ${isActive('/members')}`} onClick={() => navigate('/members')}>Members</div>
+            <div className={`hover:cursor-pointer ${isActive('/requests')}`} onClick={() => navigate('/requests')}>Doc Requests</div>
             <div className={`hover:cursor-pointer ${isActive('/verifydocs')}`} onClick={() => navigate('/verifydocs')}>Verify NFTs</div>
-
           </>
         );
       default:
@@ -65,7 +63,7 @@ function Header() {
   };
 
   return (
-    <div className="h-12 w-full bg-primaryBlack fixed top-0 flex justify-between items-center md:px-12 py-6 text-white">
+    <div className="h-16 w-full bg-gray-800 flex justify-between items-center md:px-12 py-6 text-white">
       <div className="hover:cursor-pointer text-[10px] md:text-[20px] text-primaryGreen font-semibold">docVault</div>
 
       {/* Desktop Menu */}
