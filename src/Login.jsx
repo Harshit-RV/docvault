@@ -71,18 +71,19 @@ function UserForm() {
     
     if (isSignUp) {
       console.log('signing up');
-      registerUserMethod(account, name);
+      await registerUserMethod(account, name);
       localStorage.setItem('role', 'user');
     }
 
-    if (!isSignUp) {
-      const name = getUserNameMethod(account, account);
-      if (name == null) {
+    // if (!isSignUp) {
+      const name2 = await getUserNameMethod(account, account);
+      console.log(name2);
+      if (name2 == null) {
         console.log('User not registered');
         // TODO: add toast here
         return;
       }
-    }
+    // }
   }
 
   return (

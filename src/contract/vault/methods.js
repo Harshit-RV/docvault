@@ -81,11 +81,69 @@ export async function getOrgNameMethod(address, orgAddress) {
 
 export async function getUserNameMethod(address, userAddress) {
     try {
-      const result = await contract.methods.getUserName(userAddress).call({ from: address , gas : 2000000});
+      const result = await contract.methods.getUserName(userAddress).call({ from: address , gas : 3000000});
       if (result == "") {
           return null;
       }
       return result;
+    
+    } catch(error) {
+        console.error(" there was an error", error);
+    }
+}
+
+export async function getVerificationRequestsMethod(address) {
+    try {
+      const result = await contract.methods.getVerificationRequests().call({ from: address , gas : 2000000});
+
+      return result;
+    
+    } catch(error) {
+        console.error(" there was an error", error);
+    }
+}
+
+
+export async function getNewDocumentRequestsMethod(address) {
+    try {
+      const result = await contract.methods.getNewDocumentRequests().call({ from: address , gas : 2000000});
+
+      return result;
+    
+    } catch(error) {
+        console.error(" there was an error", error);
+    }
+}
+
+export async function addVerificationRequestMethod(address, orgAddress, id, ipsfHash, title, description, metadata, docType) {
+    try {
+      const result = await contract.methods.addVerificationRequest(orgAddress, id, ipsfHash, title, description, metadata, docType).send({ from: address , gas : 2000000});
+
+      console.log(result);
+    
+    } catch(error) {
+        console.error(" there was an error", error);
+    }
+}
+
+export async function addNewDocumentRequestMethod(address, orgAddress, id, title, description, metadata, docType) {
+    try {
+      const result = await contract.methods.addNewDocumentRequest(orgAddress, id, title, description, metadata, docType).send({ from: address , gas : 2000000});
+
+      console.log(result);
+    
+    } catch(error) {
+        console.error(" there was an error", error);
+    }
+}
+
+export async function getUserOrganizationsMethod(address) {
+    try {
+      const result = await contract.methods.getUserOrganizations().call({ from: address , gas : 2000000});
+        
+      console.log(result);
+        
+        return result;
     
     } catch(error) {
         console.error(" there was an error", error);

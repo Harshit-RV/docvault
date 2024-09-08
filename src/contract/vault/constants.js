@@ -197,6 +197,56 @@ export const abi = [
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "getNewDocumentRequests",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "id",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "orgAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "publisher",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "title",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "metadata",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "docType",
+						"type": "string"
+					}
+				],
+				"internalType": "struct TokenContract.NewDocumentRequests[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -229,6 +279,74 @@ export const abi = [
 				"internalType": "string",
 				"name": "",
 				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getUserOrganizations",
+		"outputs": [
+			{
+				"internalType": "address[]",
+				"name": "",
+				"type": "address[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getVerificationRequests",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "string",
+						"name": "id",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "orgAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "ipfsHash",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "publisher",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "title",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "description",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "metadata",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "docType",
+						"type": "string"
+					}
+				],
+				"internalType": "struct TokenContract.VerificationRequest[]",
+				"name": "",
+				"type": "tuple[]"
 			}
 		],
 		"stateMutability": "view",
@@ -678,4 +796,4 @@ export const abi = [
 	}
 ];
 
-export const contractAddress = '0x3B2Cc9daa0674FE4bE40135Cb8Fc2cB296dD6715';
+export const contractAddress = '0x453e951357023DA1a73D158cd40f7b3F13C12473';
