@@ -6,6 +6,7 @@ import Login from './Login';
 import SignUp from './SignUp';
 import MyOrgs from './pages/MyOrgs';
 import Certificate from './pages/Certificate';
+import Requests from './pages/Requests';
 
 function App() {
   return (
@@ -19,9 +20,9 @@ function App() {
           <Route path='/signup' element={<SignUp />} />
           <Route path='/certificate' element={<Certificate />} />
           <Route path="/myorgs" element={<MyOrgs />} />
+          <Route path='/requests' element={<Requests />} />
           {/* />
         
-          {/* <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/workflow' element={<WorkFlow />} />
           <Route path='/auction' element={<Auction />} />
