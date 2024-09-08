@@ -14,7 +14,7 @@ function Login() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col md:flex-row px-8">
+    <div className="min-h-screen bg-gray-900 flex flex-col justify-center md:flex-row px-8">
       <div className="md:w-1/2 flex flex-col justify-center items-center p-8 pt-2">
         <img 
           className="rounded-lg shadow-2xl mb-8 max-w-md w-full" 
@@ -27,25 +27,25 @@ function Login() {
         </p>
       </div>
       
-      <div className="md:w-1/2 flex justify-center items-center p-8">
-        <Card className="w-full max-w-md bg-gray-800 text-white border-gray-700">
+      <div className="md:w-1/2 flex justify-center items-center p-8 pt-2 ">
+        <Card className="w-full max-w-md bg-gray-800 text-white border-gray-700 h-[60vh]">
           <CardHeader>
-            <CardTitle className="text-3xl font-bold text-center">Welcome to docVault</CardTitle>
+            <CardTitle className="text-3xl pt-2 font-bold text-center">Welcome to docVault</CardTitle>
             <CardDescription className="text-gray-400 text-center">
               Connect your wallet to get started
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="user" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-4">
+          <CardContent className="flex justify-center">
+            <Tabs defaultValue="user" className="w-3/4 pt-4">
+              <TabsList className="grid w-full grid-cols-2 mb-16">
               <TabsTrigger 
                 value="user" 
-                className="text-black data-[state=active]:text-white data-[state=active]:bg-blue-500">
+                className="text-black data-[state=active]:text-white data-[state=active]:bg-gray-600">
                 User
               </TabsTrigger>
               <TabsTrigger 
                 value="organization" 
-                className="text-black data-[state=active]:text-white data-[state=active]:bg-blue-500">
+                className="text-black data-[state=active]:text-white data-[state=active]:bg-gray-600">
                 Organization
               </TabsTrigger>
               </TabsList>
@@ -125,7 +125,7 @@ function UserForm({ navigate }) {
       />
       <Button 
         onClick={() => handleConnect(true)}
-        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+        className="w-full bg-gray-800 border border-white hover:bg-emerald-700 text-white"
         disabled={isLoading}
       >
         {isLoading ? 'Connecting...' : 'Connect and Sign Up'}
@@ -139,7 +139,7 @@ function UserForm({ navigate }) {
       <Button 
         // variant="outline"
         onClick={() => handleConnect(false)}
-        className="w-full  bg-emerald-600 hover:bg-emerald-700 text-white"
+        className="w-full  bg-primaryGreen hover:bg-emerald-700 text-black"
         disabled={isLoading}
       >
         {isLoading ? 'Connecting...' : 'Connect and Sign In'}
@@ -189,6 +189,7 @@ function OrganizationForm({ navigate }) {
 
   return (
     <div className='flex flex-col gap-4'>
+
       <Input 
         type="text" 
         value={name}
@@ -198,25 +199,31 @@ function OrganizationForm({ navigate }) {
       />
       <Button 
         onClick={() => handleConnect(true)}
-        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+        className="w-full bg-gray-800 border border-primaryGreen hover:bg-emerald-700 text-primaryGreen"
         disabled={isLoading}
       >
         {isLoading ? 'Connecting...' : 'Connect and Sign Up'}
       </Button>
+
       <div className="relative">
         <Separator className="my-4" />
         <div className="absolute inset-0 flex items-center justify-center">
           <span className="bg-gray-800 px-2 text-gray-400 text-sm">OR</span>
         </div>
       </div>
+
       <Button 
         onClick={() => handleConnect(false)}
         // variant="outline"
-        className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+        className="w-full bg-primaryGreen hover:bg-emerald-700 text-black"
         disabled={isLoading}
       >
         {isLoading ? 'Connecting...' : 'Connect and Sign In'}
       </Button>
+
+     
+
+     
     </div>
   );
 }

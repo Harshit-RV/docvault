@@ -56,15 +56,15 @@ export default function Component() {
 
   return (
     <div className="min-h-screen bg-gray-900 p-16">
-      <div className="flex justify-between items-center mb-14 px-12">
-        <h1 className="text-white font-bold text-2xl">My Organizations</h1>
+      <div className="flex justify-between items-center mb-14 px-60">
+        <h1 className="text-white font-bold text-2xl ml-1">My Organizations</h1>
         <p className='text-white'>{address}</p>
         <Dialog>
           <DialogTrigger>
             <Button 
-              className='bg-primaryGreen text-black font-bold hover:bg-primaryGreen/70 transition-colors'
+              className='bg-primaryGreen text-black font-bold hover:bg-primaryGreen/70 mr-6 transition-colors'
             >
-              <PlusIcon className="mr-2 h-4 w-4" /> Join New
+              <PlusIcon className=" h-4 w-4 " /> Join New
             </Button>
           </DialogTrigger>
           <DialogContent className="bg-gray-900 border-none text-white py-7 px-8">
@@ -99,31 +99,31 @@ export default function Component() {
         </Dialog>
       </div>
 
-      <Button onClick={handleJoin}> handle join </Button>
+      {/* <Button onClick={handleJoin}> handle join </Button> */}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 px-12">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 px-60">
         {
-          orgsLoading && (
-            <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
-              <span className='font-bold text-2xl'>Loading...</span>
-            </div>
-          ) 
+          // orgsLoading && (
+          //   // <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
+          //   //   <span className='font-bold text-2xl'>Loading...</span>
+          //   // </div>
+          // ) 
         }
         {
-          orgsLoading || orgs === undefined 
-          ? <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
-              <span className='font-bold text-2xl'>Loading...</span>
-            </div>
-          : orgs.length === 0
-            ? (
-              <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
-                <span className='font-bold text-2xl'>No organisations joined</span>
-              </div>
-            ): (
-              orgs.map((org, index) => (
-                <OrgElement key={index} orgAddress={org} />
-              ))
-            )
+          // orgsLoading || orgs === undefined 
+          // ? <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
+          //     <span className='font-bold text-2xl'>Loading...</span>
+          //   </div>
+          // : orgs.length === 0
+          //   ? (
+          //     <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
+          //       <span className='font-bold text-2xl'>No organisations joined</span>
+          //     </div>
+          //   ): (
+          //     orgs.map((org, index) => (
+          //       <OrgElement key={index} orgAddress={org} />
+          //     ))
+          //   )
         }
         <OrgElement orgAddress={'0x885690e5893bE8Be6EdE0A0339Cb89138a485AeC'} />
         <OrgElement orgAddress={'0x885690e5893bE8Be6EdE0A0339Cb89138a485AeC'} />
@@ -152,10 +152,10 @@ const OrgElement = ({ orgAddress }) => {
 
   return (
     <Card
-      className="bg-gray-800 text-white border border-gray-700 flex flex-col justify-between h-[250px]"
+      className="bg-gray-800 text-white border border-gray-700 flex flex-col justify-between w-[250px] h-[150px]"
     >
       <CardContent className="pt-6">
-        <h2 className="text-3xl font-semibold mb-4">{name}</h2>
+        <h2 className="text-[2.5vh] font-semibold text-gray-200  mb-4">Airport Authority</h2>
         <p className="text-md text-gray-400">({String(orgAddress).slice(0, 10)}...)</p>
       </CardContent>
       <CardFooter className="flex justify-between">
