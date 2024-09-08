@@ -2,7 +2,7 @@ import React from 'react';
 
 const FileUpload = ({ onChange }) => {
   return (
-    <div className="border-2 border-dashed border-gray-300 p-6 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors">
+    <div className="border-2 h-40 mt-5 border-dashed border-gray-300 p-6 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors">
       <input 
         type="file" 
         className="hidden" 
