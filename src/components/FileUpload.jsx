@@ -1,10 +1,10 @@
 import React from 'react';
 
-const FileUpload = ({ onChange }) => {
+const FileUpload = ({ type,onChange }) => {
   return (
     <div className="border-2 border-dashed border-gray-300 p-6 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors">
       <input 
-        type="file" 
+        type={type}
         className="hidden" 
         onChange={onChange} 
         id="file-upload"
