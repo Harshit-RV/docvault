@@ -1,16 +1,43 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import FileUpload from "@/components/FileUpload";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FileIcon, MoreVertical } from 'lucide-react'
 import { useParams } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { addNewDocumentRequestMethod, getOrgNameMethod } from "@/contract/vault/methods";
+import useWallet from '@/hooks/useWallet';
+import { v4 as uuidv4 } from 'uuid';
+
 function OrgPage() {
+  const { address } = useWallet(); 
+
   const [ activeTab, setActiveTab ] =  useState("tab1");
-  const [popup, setPopup] = useState(false);
-  const [popupTab, setPopupTab] = useState("requestNewFile");
-  const { orgName } = useParams();
-  const [files, setFiles] = useState([
+  const [ popup, setPopup ] = useState(false);
+  const [ popupTab, setPopupTab ] = useState("requestNewFile");
+  const { orgAddress } = useParams();
+
+  const [ orgName, setOrgName ] = useState('');
+
+  const [ documentType, setDocumentType ] = useState("");
+
+  const getNameFromAddress = async () => {
+    const name2 = await getOrgNameMethod(address, orgAddress);
+    setOrgName(name2);
+  }
+
+  useEffect(() => {
+    getNameFromAddress();
+  },[]);
+
+  const [ files, setFiles ] = useState([
     { id: 1, name: 'Example File.pdf', type: 'PDF', size: '2.5 MB' },
     { id: 2, name: 'Document.docx', type: 'DOCX', size: '1.8 MB' },
     { id: 3, name: 'Image.jpg', type: 'JPG', size: '3.2 MB' },
@@ -21,33 +48,45 @@ function OrgPage() {
   const handlePopupTabChange = (tabName) => {
     setPopupTab(tabName);
   };
+
   const handlePopup = () => {
     setPopup(!popup);
   };
+
   const handleTabChange =(tabName)=>{
     setActiveTab(tabName);
-}
-const handleFileChange = (event) => {
-      const file = event.target.files[0]; // Assuming only one file is selected
-  
-  if (file) {
-    // Check file type
-    const validTypes = ["image/png", "image/jpeg", "image/jpg"];
-    if (!validTypes.includes(file.type)) {
-      toast.error("Invalid file type. Only PNG, JPG, and JPEG are allowed.");
-      return;
-    }
-
-    // Check file size (50KB)
-    const maxSizeInBytes = 50 * 1024; // 50KB
-    if (file.size > maxSizeInBytes) {
-      toast.error("File size exceeds 50KB.");
-      return;
-    }
-
-    console.log("File is valid", file);
   }
-};
+
+  const onSubmitRequestVerification = () => {
+    // TODO: get all files and filter by org name.
+  }
+
+  const onNewDocumentRequest = async () => {
+    const uniqueId = uuidv4();
+    console.log("Document Type", uniqueId);
+    await addNewDocumentRequestMethod(address, orgAddress, uniqueId, documentType);
+    // TODO: get all files and filter by org name.
+  }
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    
+    if (file) {
+      const validTypes = ["image/png", "image/jpeg", "image/jpg"];
+      if (!validTypes.includes(file.type)) {
+        toast.error("Invalid file type. Only PNG, JPG, and JPEG are allowed.");
+        return;
+      }
+
+      const maxSizeInBytes = 50 * 1024;
+      if (file.size > maxSizeInBytes) {
+        toast.error("File size exceeds 50KB.");
+        return;
+      }
+
+      console.log("File is valid", file);
+    }
+  };
 
   return (
     <div className="bg-gray-900 h-screen px-12">
@@ -88,21 +127,23 @@ const handleFileChange = (event) => {
               
 
               {popupTab === "requestNewFile" && (
-                <form>
-                  <div className="mb-8">
-                    <label className="block text-gray-700 font-semibold">Document Type</label>
-                    <select className="w-full border border-gray-300 p-2 mt-2 rounded">
-                      <option value="">Select Document</option>
-                      <option value="document1">Bonafide Certificate</option>
-                      <option value="document2">Merit Award Certificate</option>
-                      <option value="document2">Medical Certificate</option>
-                      <option value="document2">School leaving Certificate</option>
-                      <option value="document2">Letter of Recommendation</option>
-                      <option value="document2">Appointment letter</option>
-                    </select>
-                  </div>
+                <div>
+                  <Select value={documentType} onValueChange={setDocumentType}>
+                    <SelectTrigger className="w-full bg-white">
+                      <SelectValue placeholder="Select Doc Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="BONAFIDE">Bonafide Certificate</SelectItem>
+                      <SelectItem value="MERIT">Merit Award Certificate</SelectItem>
+                      <SelectItem value="MEDICAL">Medical Certificate</SelectItem>
+                      <SelectItem value="SCHOOL">School leaving Certificate</SelectItem>
+                      <SelectItem value="LOR">Letter of Recommendation</SelectItem>
+                      <SelectItem value="APPOINTMENT">Appointment letter</SelectItem>
+                      <SelectItem value="OTHER">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
 
-                  <div className="flex justify-end">
+                  <div className="flex justify-end mt-8">
                     <button
                       type="button"
                       className="bg-black text-white px-4 py-2 rounded mr-2"
@@ -112,19 +153,33 @@ const handleFileChange = (event) => {
                     </button>
                     <button
                       type="submit"
+                      onClick={onNewDocumentRequest}
                       className="bg-primaryGreen text-black font-medium px-4 py-2 rounded"
                     >
                       Request
                     </button>
                   </div>
-                </form>
+                </div>
               )}
 
               {popupTab === "requestVerification" && (
-                <form>
+                <div>
+                  <Select value={documentType} onValueChange={setDocumentType}>
+                    <SelectTrigger className="w-full bg-white">
+                      <SelectValue placeholder="Select Doc Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="BONAFIDE">Bonafide Certificate</SelectItem>
+                      <SelectItem value="MERIT">Merit Award Certificate</SelectItem>
+                      <SelectItem value="MEDICAL">Medical Certificate</SelectItem>
+                      <SelectItem value="SCHOOL">School leaving Certificate</SelectItem>
+                      <SelectItem value="LOR">Letter of Recommendation</SelectItem>
+                      <SelectItem value="APPOINTMENT">Appointment letter</SelectItem>
+                      <SelectItem value="OTHER">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
 
-                  <div className="mb-4">
-                    <label className="block text-gray-700 font-semibold">Upload File</label>
+                  <div className="mb-4 mt-5">
                     <FileUpload onChange={handleFileChange} />
                   </div>
 
@@ -139,11 +194,12 @@ const handleFileChange = (event) => {
                     <button
                       type="submit"
                       className="bg-primaryGreen text-black font-medium px-4 py-2 rounded"
+                      onClick={onSubmitRequestVerification}
                     >
                       Submit
                     </button>
                   </div>
-                </form>
+                </div>
               )}
             </div>
           </div>
