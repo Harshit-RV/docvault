@@ -10,6 +10,7 @@ import Requests from './pages/Requests';
 import OrgPage from './pages/OrgPage';
 import Firepage from './pages/Firepage';
 import Members from './pages/Members';
+import Copy from './copy';
 import UploadImage from './pages/UploadImage'
 import Header from './pages/Header';
 
@@ -30,6 +31,7 @@ function App() {
           <Route path='/requests' element={<Requests />} />
           <Route path="/org/:orgName" element={<OrgPage/>} />
           <Route path='/members' element={<Members />} />
+          <Route path='/copy' element={<Copy/>}/>
           <Route path="/uploadImage" element={<UploadImage/>}/>
           {/* />
         

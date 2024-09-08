@@ -14,7 +14,7 @@ function Header() {
 
   useEffect(() => {
     const handleStorageChange = () => {
-      const role = user;
+      const role = localStorage.getItem('role');
       setUserRole(role);
     };
 
