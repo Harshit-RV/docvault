@@ -7,6 +7,7 @@ import SignUp from './SignUp';
 import MyOrgs from './pages/MyOrgs';
 import Certificate from './pages/Certificate';
 import Requests from './pages/Requests';
+import OrgPage from './pages/OrgPage';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path='/certificate' element={<Certificate />} />
           <Route path="/myorgs" element={<MyOrgs />} />
           <Route path='/requests' element={<Requests />} />
+          <Route path="/org/:orgName" element={<OrgPage/>} />
           {/* />
         
           <Route path='/signup' element={<Signup />} />
