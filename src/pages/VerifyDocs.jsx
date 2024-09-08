@@ -1,4 +1,3 @@
-import React from 'react'
 import { useState } from 'react'
 
 function VerifyDocs() {
@@ -8,6 +7,7 @@ function VerifyDocs() {
     const [loading, setLoading] = useState(false);
     const [nftMetadata, setNftMetadata] = useState(null);
     const [nftsByWallet, setNftsByWallet] = useState([]);
+
     const handleTabChange =(tabName)=>{
         setActiveTab(tabName);
         setNftMetadata(null);
@@ -42,6 +42,7 @@ function VerifyDocs() {
             setLoading(false);
         }, 2000);
     };
+
   return (
     <div className='bg-[#0D111D] flex flex-col h-screen items-center pt-16 gap-8 overflow-y-auto pb-16'>
         <h1 className='text-white text-4xl font-bold mb-2'>Verify Documents</h1>

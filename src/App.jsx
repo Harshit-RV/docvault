@@ -7,6 +7,7 @@ import SignUp from './SignUp';
 import MyOrgs from './pages/MyOrgs';
 import Certificate from './pages/Certificate';
 import Firepage from './pages/Firepage';
+import JoinRequests from './pages/JoinRequests';
 
 function App() {
   return (
@@ -19,12 +20,14 @@ function App() {
           <Route path='/login' element={<Login />}/>
           <Route path='/signup' element={<SignUp />} />
           <Route path='/certificate' element={<Certificate />} />
+          <Route path="/myorgs" element={<MyOrgs />} />
+          <Route path='/test' element={<Firepage />} />
+          <Route path='/members' element={<JoinRequests />} />
 
           
           {/* />
         
-          <Route path="/myorgs" element={<MyOrgs />} />
-          <Route path='/test' element={<Firepage />} />
+          
            {/* <Route path='/signup' element={<Signup />} />
           <Route path='/workflow' element={<WorkFlow />} />
           <Route path='/auction' element={<Auction />} />
