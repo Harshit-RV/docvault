@@ -25,11 +25,13 @@ export default function Component() {
   const [selectedOrg, setSelectedOrg] = useState(null)
 
   const [organizations, setOrganizations] = useState([
-    { name: "Acme Corp", address: "0x1234...5678" },
-    { name: "TechNova", address: "0xabcd...efgh" },
-    { name: "Green Energy", address: "0x9876...5432" },
-    { name: "Future Finance", address: "0xijkl...mnop" },
-  ])
+    { name: 'Acme Corp', address: '0x1234...5678' },
+    { name: 'TechNova', address: '0xabcd...efgh' },
+    { name: 'Green Energy', address: '0x9876...5432' },
+    { name: 'Future Finance', address: '0xijkl...mnop' },
+  ]);
+
+  const navigate = useNavigate();
 
   const handleJoin = async () => {
     if (address) {
@@ -37,9 +39,9 @@ export default function Component() {
       await requestToJoinOrgMethod(address, '0xDfCDbf47c708949c53Db81041381a580462bc582', 'really want to join this room')
       toast.success("Successfully joined the organization!")
     } else {
-      toast.error("Please enter a valid wallet address.")
+      toast.error('Please enter a valid wallet address.');
     }
-  }
+  };
 
   const handleLeave = () => {
     const updatedOrganizations = organizations.filter(org => org !== selectedOrg)
@@ -56,7 +58,7 @@ export default function Component() {
   // const { data: orgs, isLoading: orgsLoading, refetch: refetchOrgs } = useQuery('events', fetchOrgs);
 
   return (
-    <div className='min-h-screen bg-gray-900 p-16'>
+    <div className="min-h-screen bg-primaryBlack p-16">
       <div className="flex justify-between items-center mb-14 px-12">
         <h1 className="text-white font-bold text-3xl">My Organizations {address}</h1>
         <Dialog>
@@ -103,7 +105,10 @@ export default function Component() {
 
       {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 px-12">
         {organizations.map((org, index) => (
-          <Card key={index} className="bg-gray-800 text-white border border-gray-700 flex flex-col justify-between h-[250px]">
+          <Card
+            key={index}
+            className="bg-gray-800 text-white border border-gray-700 flex flex-col justify-between h-[250px]"
+          >
             <CardContent className="pt-6">
               <h2 className="text-3xl font-semibold mb-4">{org.name}</h2>
               <p className="text-md text-gray-400">{org.address}</p>
@@ -143,7 +148,7 @@ export default function Component() {
                 variant="outline" 
                 size="sm" 
                 onClick={() => handleEnter(org)}
-                className="border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-white"
+                className="border-emerald-500 bg-emerald-500 text-white font-bold hover:bg-emerald-500 hover:text-white"
               >
                 <LogInIcon className="mr-2 h-4 w-4" /> Enter
               </Button>
@@ -154,5 +159,5 @@ export default function Component() {
 
       <ToastContainer />
     </div>
-  )
+  );
 }
