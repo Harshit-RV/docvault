@@ -1,68 +1,117 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Web3 from 'web3';
-import {useState} from 'react';
+import Web3 from 'web3'
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { LogInIcon, Users } from 'lucide-react'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
-function Login() {
-    const navigate = useNavigate();
-    
+export default function Login() {
+  const navigate = useNavigate()
+  const [isConnecting, setIsConnecting] = useState(false)
+
+  // const connectWallet = async (userType: 'user' | 'organization') => {
+  //   setIsConnecting(true)
+  //   try {
+  //     if (typeof window.ethereum !== 'undefined') {
+  //       const web3 = new Web3(window.ethereum)
+  //       await window.ethereum.request({ method: 'eth_requestAccounts' })
+  //       const accounts = await web3.eth.getAccounts()
+  //       console.log('Connected account:', accounts[0])
+  //       toast.success('Wallet connected successfully!')
+  //       setTimeout(() => {
+  //         navigate(userType === 'user' ? '/user-dashboard' : '/org-dashboard')
+  //       }, 2000)
+  //     } else {
+  //       toast.error('Please install MetaMask!')
+  //     }
+  //   } catch (error) {
+  //     console.error('Failed to connect wallet:', error)
+  //     toast.error('Failed to connect wallet. Please try again.')
+  //   } finally {
+  //     setIsConnecting(false)
+  //   }
+  // }
+  const connectWallet = async (userType) => {
+    setIsConnecting(true);
+    try {
+      if (typeof window.ethereum !== 'undefined') {
+        const web3 = new Web3(window.ethereum);
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const accounts = await web3.eth.getAccounts();
+        console.log('Connected account:', accounts[0]);
+        toast.success('Wallet connected successfully!');
+        setTimeout(() => {
+          navigate(userType === 'user' ? '/user-dashboard' : '/org-dashboard');
+        }, 2000);
+      } else {
+        toast.error('Please install MetaMask!');
+      }
+    } catch (error) {
+      console.error('Failed to connect wallet:', error);
+      toast.error('Failed to connect wallet. Please try again.');
+    } finally {
+      setIsConnecting(false);
+    }
+  };
 
   return (
-    <div>
-    <div className='h-screen w-full grid md:grid-cols-7 grid-cols-2'>
-      {/* Coloured Section */}
-      <div className='md:col-span-4 hidden md:flex justify-end items-center'>
-        <div className='bg-primaryBlack h-full w-full flex flex-col items-center justify-center pt-14 gap-16'>
-          <img 
-            className='rounded w-[60vh]' 
-            src="https://nanonets.com/blog/content/images/2022/06/shutterstock_1785042593.jpg" 
-            alt="Auction"
-          />
-          <div className='text-white text-center'>
-            <h1 className='text-4xl font-bold mb-4'>docVault</h1>
-            <p className='text-lg'>Blockchain and AI based Document Verification System</p>
-          </div>
-        </div>
+    <div className="min-h-screen bg-gray-900 flex flex-col md:flex-row px-8">
+      {/* Left side - Image and Title */}
+      <div className="md:w-1/2 flex flex-col justify-center items-center p-8">
+        <img 
+          className="rounded-lg shadow-2xl mb-8 max-w-md w-full" 
+          src="https://nanonets.com/blog/content/images/2022/06/shutterstock_1785042593.jpg" 
+          alt="Document Verification"
+        />
+        <h1 className="text-4xl font-bold text-white mb-4">docVault</h1>
+        <p className="text-xl text-gray-300 text-center">
+          Blockchain and AI based Document Verification System
+        </p>
       </div>
-      
-      {/* Main Section */}
-      <div className='flex flex-col md:col-span-3 col-span-2'>
-        <div className='h-full w-full flex flex-col items-center pt-36 gap-16'>
-          <div className='text-center'>
-            <h1 className='text-3xl font-semibold'>
-              Welcome to
-            </h1>
-            <h1 className='text-5xl font-bold text-primaryGray p-3'>docVault</h1>
-          </div>
-          <div className='flex flex-col gap-2 text-center'>
-            <button 
-              type="button" 
-             
-              className="w-60 py-3 px-5 mt-10 text-sm font-medium rounded-xl border focus:z-10 focus:ring-4 focus:ring-gray-100 bg-primaryBlack text-white border-gray-600 hover:bg-gray-700"
+
+      {/* Right side - Login Form */}
+      <div className="md:w-1/2 flex justify-center items-center p-8">
+        <Card className="w-full max-w-md bg-gray-800 text-white">
+          <CardHeader>
+            <CardTitle className="text-3xl font-bold text-center">Welcome to docVault</CardTitle>
+            <CardDescription className="text-gray-400 text-center">
+              Connect your wallet to get started
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button 
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+              onClick={() => connectWallet('user')}
+              disabled={isConnecting}
             >
-              Login As User
-            </button>
-            <button 
-              type="button" 
- 
-              className="w-60 py-3 px-5 mt-4 text-sm font-medium rounded-xl border focus:z-10 focus:ring-4 focus:ring-gray-100 bg-primaryBlack text-white border-gray-600 hover:bg-gray-700"
+              <LogInIcon className="mr-2 h-4 w-4" /> 
+              {isConnecting ? 'Connecting...' : 'Login as User'}
+            </Button>
+            <Button 
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              onClick={() => connectWallet('organization')}
+              disabled={isConnecting}
             >
-              Login As Organisation
-            </button>
-       
-            <div 
-         
-              className='font-semibold mt-4 text-base hover:cursor-pointer hover:underline'
-              onClick={() => navigate('/signup')}
-            >
-              Not registered? Sign Up.
-            </div>
-          </div>
-        </div>
+              <Users className="mr-2 h-4 w-4" /> 
+              {isConnecting ? 'Connecting...' : 'Login as Organization'}
+            </Button>
+          </CardContent>
+          <CardFooter>
+            <p className="text-sm text-gray-400 text-center w-full">
+              Not registered?{' '}
+              <span 
+                className="text-emerald-500 hover:underline cursor-pointer"
+                onClick={() => navigate('/signup')}
+              >
+                Sign Up
+              </span>
+            </p>
+          </CardFooter>
+        </Card>
       </div>
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
     </div>
-  </div>
-  
   )
 }
-
-export default Login
