@@ -27,7 +27,7 @@ function App() {
           <Route path='/login' element={<Login />}/>
           <Route path='/certificate' element={<Certificate />} />
           <Route path="/myorgs" element={<MyOrgs />} />
-          <Route path='/requests' element={<Requests />} />
+          <Route path='/requests' element={<Requests />} />1
           <Route path="/org/:orgAddress" element={<OrgPage/>} />
           <Route path='/members' element={<Members />} />
           <Route path='/copy' element={<Copy/>}/>
