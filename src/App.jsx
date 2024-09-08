@@ -10,7 +10,7 @@ import OrgPage from './pages/OrgPage';
 import Firepage from './pages/Firepage';
 import Members from './pages/Members';
 import Copy from './copy';
-import UploadImage from './pages/UploadImage'
+// import UploadImage from './pages/UploadImage'
 import Header from './pages/Header';
 import IpfsHash from './pages/ipfshash'
 
@@ -31,8 +31,21 @@ function App() {
           <Route path="/org/:orgAddress" element={<OrgPage/>} />
           <Route path='/members' element={<Members />} />
           <Route path='/copy' element={<Copy/>}/>
+<<<<<<< HEAD
+          {/* <Route path="/uploadImage" element={<UploadImage/>}/> */}
+          {/* />
+        
+          {/* <Route path='/login' element={<Login />} />
+          <Route path='/signup' element={<Signup />} />
+          <Route path='/workflow' element={<WorkFlow />} />
+          <Route path='/auction' element={<Auction />} />
+          <Route path="/payments" element={<Payments />} />
+          <Route path="/approvals" element={<Approvals />} />
+          } */}
+=======
           <Route path="/uploadImage" element={<UploadImage/>}/>
           <Route path='/ipfshash' element={<IpfsHash/>}/>
+>>>>>>> b6697161593063f885d5a8351c7fa7e20fd66a33
         </Routes>
     </BrowserRouter>
     </div>
