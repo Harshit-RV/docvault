@@ -1,22 +1,101 @@
 import { User, Check, X , WalletMinimal} from 'lucide-react'
 import { useState } from 'react'
+import { useQuery } from 'react-query'
+import { getMembersMethod, getJoinRequestsMethod, getUserNameMethod, updateJoinRequestMethod } from '@/contract/vault/methods'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+
 
 export default function Requests() {
-    const [activeTab, setActiveTab] = useState('tab1')
-    const handleTabChange = (tabName) => {
-        setActiveTab(tabName);
-    }
-  const requests = [
-    { id: 1, type: 'New File', name: 'Bonafide Certificate', requester: 'John Doe', address: '0x1234...5678' },
-    { id: 2, type: 'Verification', name: 'Merit Award Certificate', requester: 'Jane Smith', address: '0x1234...5678' },
-    { id: 3, type: 'New File', name: 'Medical Certificate', requester: 'Alice Johnson', address: '0x1234...5678' },
-    { id: 4, type: 'Verification', name: 'School Leaving Certificate', requester: 'Bob Williams', address: '0x1234...5678' }, 
-  ]
+  const [activeTab, setActiveTab] = useState('tab1')
+  
+  const handleTabChange = (tabName) => {
+      setActiveTab(tabName);
+  }
+
+  const fetchMembers = async () => {
+    const address2 = '0xDfCDbf47c708949c53Db81041381a580462bc582';
+    const result = await getMembersMethod(address2);
+    console.log('result', result);
+    return result;
+  }
+
+  const { data: members, isLoading: membersLoading, refetch: refetchMembers } = useQuery('orgmembers', fetchMembers);
+
+  const fetchRequests = async () => {
+      const address2 = '0xDfCDbf47c708949c53Db81041381a580462bc582';
+      const result = await getJoinRequestsMethod(address2);
+      console.log('requests:', result);
+      return result;
+  }
+
+  const { data: requests, isLoading: requestsLoading, refetch: refetchRequests } = useQuery('requests', fetchRequests);
 
   return (
     <div className='bg-primaryBlack min-h-screen p-8 flex justify-center items-center pt-12'>
     <div className='w-full max-w-4xl pl-20'>
         <h1 className='text-4xl font-bold text-white mb-16'>Requests</h1>
+        <Tabs defaultValue="members" className="w-full">
+            <div className="flex justify-start mb-8">
+              <TabsList className="grid w-[300px] h-min grid-cols-2 bg-gray-600 text-white">
+                <TabsTrigger value="members" className="py-1.5 text-sm flex items-center justify-center">
+                  Members
+                </TabsTrigger>
+                <TabsTrigger value="requests" className="py-1.5 text-sm flex items-center justify-center">
+                  Requests
+                </TabsTrigger>
+              </TabsList>
+            </div>
+            <TabsContent value="members">
+              <div className='w-full flex-col flex gap-4'>
+                {
+                  membersLoading && (
+                    <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
+                      <span className='font-bold text-2xl'>Loading...</span>
+                    </div>
+                  ) 
+                }
+                {
+                  membersLoading || members === undefined 
+                  ? null
+                  : members.length === 0
+                    ? (
+                      <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
+                        <span className='font-bold text-2xl'>No Members</span>
+                      </div>
+                    ): (
+                      members.map((member, index) => (
+                        <p>something</p>
+                      ))
+                    )
+                }
+              </div>
+            </TabsContent>
+            <TabsContent value="requests">
+              <div className='w-full flex-col flex gap-4'>
+                {
+                  requestsLoading && (
+                    <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
+                      <span className='font-bold text-2xl'>Loading...</span>
+                    </div>
+                  ) 
+                }
+                {
+                  requestsLoading || requests === undefined 
+                  ? null
+                  : requests.length === 0
+                    ? (
+                      <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
+                        <span className='font-bold text-2xl'>No join requests</span>
+                      </div>
+                    ): (
+                      requests.map((request, index) => (
+                        <p>something</p>
+                      ))
+                    )
+                }
+              </div>
+            </TabsContent>
+          </Tabs>
         <div className='flex gap-4 bg-[#1C1F2E] w-72 rounded-lg p-2 mb-8'>
             <Tab 
                 name="New Files" 

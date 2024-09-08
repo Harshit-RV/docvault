@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/prop-types */
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { CheckIcon, XIcon, HomeIcon, ClockIcon, FileTextIcon, UserIcon, UserPlusIcon } from 'lucide-react'
@@ -7,11 +9,10 @@ import { getMembersMethod, getJoinRequestsMethod, getUserNameMethod, updateJoinR
 import { useEffect, useState } from 'react'
 import { signMessage } from '@/utils/signMessage';
 
-export default function Members() {
-  const { address, signer } = useWallet(); 
+export default function Members() {  
   
   const fetchMembers = async () => {
-      const address2 = '0xDfCDbf47c708949c53Db81041381a580462bc582';
+      const address2 = '0x885690e5893bE8Be6EdE0A0339Cb89138a485AeC';
       const result = await getMembersMethod(address2);
       console.log('result', result);
       return result;
@@ -20,7 +21,7 @@ export default function Members() {
   const { data: members, isLoading: membersLoading, refetch: refetchMembers } = useQuery('orgmembers', fetchMembers);
 
   const fetchRequests = async () => {
-      const address2 = '0xDfCDbf47c708949c53Db81041381a580462bc582';
+      const address2 = '0x885690e5893bE8Be6EdE0A0339Cb89138a485AeC';
       const result = await getJoinRequestsMethod(address2);
       console.log('requests:', result);
       return result;
@@ -49,6 +50,7 @@ export default function Members() {
       </nav>
 
       <div className="flex-grow flex flex-col items-center mt-10">
+        {/* {address} */}
         <div className="flex-col w-full max-w-[600px] flex items-center">
           <Tabs defaultValue="members" className="w-full">
             <div className="flex justify-start mb-8">
@@ -131,7 +133,7 @@ export default function Members() {
 }
 
 function JoinRequestElement(props) {
-  const { address, signer } = useWallet(); 
+  const { address } = useWallet(); 
 
   const [ name, setName ] = useState('');
 
@@ -199,7 +201,7 @@ function JoinRequestElement(props) {
 }
 
 function MemberElement(props) {
-  const { address, signer } = useWallet(); 
+  const { address } = useWallet(); 
 
   const [ name, setName ] = useState('');
 
