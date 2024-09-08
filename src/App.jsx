@@ -18,8 +18,6 @@ function App() {
           <Route path='/login' element={<Login />}/>
           <Route path='/signup' element={<SignUp />} />
           <Route path='/certificate' element={<Certificate />} />
-
-          
           <Route path="/myorgs" element={<MyOrgs />} />
           {/* />
         

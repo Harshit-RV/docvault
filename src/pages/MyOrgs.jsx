@@ -51,7 +51,7 @@ export default function Component() {
 
       <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
         {organizations.map((org, index) => (
-          <Card key={index} className="bg-gray-800 text-white w-full max-w-xl mx-auto border border-gray-700">
+          <Card key={index} className="bg-[#1C1F2E] text-white w-full max-w-xl mx-auto border border-gray-700">
             <CardHeader>
               <CardTitle>{org.name}</CardTitle>
             </CardHeader>
