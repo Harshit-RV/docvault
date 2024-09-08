@@ -14,7 +14,7 @@ function Header() {
 
   useEffect(() => {
     const handleStorageChange = () => {
-      const role = localStorage.getItem('role');
+      const role = user;
       setUserRole(role);
     };
 
@@ -41,27 +41,22 @@ function Header() {
   // Menu items based on userRole
   const renderMenuItems = () => {
     switch (userRole) {
-      case 'staff':
+      case 'user':
         return (
           <>
-            <div className={`hover:cursor-pointer ${isActive('/')}`} onClick={() => navigate('/')}>My Orders</div>
-            <div className={`hover:cursor-pointer ${isActive('/workflow')}`} onClick={() => navigate('/workflow')}>Work Status</div>
+            <div className={`hover:cursor-pointer ${isActive('/myfiles')}`} onClick={() => navigate('/myfiles')}>All Files</div>
+            <div className={`hover:cursor-pointer ${isActive('/myorgs')}`} onClick={() => navigate('/myorgs')}>My Organisations</div>
+            <div className={`hover:cursor-pointer ${isActive('/verifydocs')}`} onClick={() => navigate('/verifydocs')}>Verify NFTs</div>
+
           </>
         );
-      case 'admin':
+      case 'org':
         return (
           <>
-            <div className={`hover:cursor-pointer ${isActive('/approvals')}`} onClick={() => navigate('/approvals')}>Verify Work</div>
-            <div className={`hover:cursor-pointer ${isActive('/myworks_admin')}`} onClick={() => navigate('/myworks_admin')}>History</div>
-            <div className={`hover:cursor-pointer ${isActive('/payments')}`} onClick={() => navigate('/payments')}>Issue Certificate</div>
-          </>
-        );
-      case 'contractor':
-        return (
-          <>
-            <div className={`hover:cursor-pointer ${isActive('/auction')}`} onClick={() => navigate('/auction')}>Auction</div>
-            <div className={`hover:cursor-pointer ${isActive('/myworks')}`} onClick={() => navigate('/myworks')}>My Works</div>
-            <div className={`hover:cursor-pointer ${isActive('/mynfts')}`} onClick={() => navigate('/mynfts')}>My NFTs</div>
+            <div className={`hover:cursor-pointer ${isActive('/')}`} onClick={() => navigate('/')}>Members</div>
+            <div className={`hover:cursor-pointer ${isActive('/')}`} onClick={() => navigate('/')}>Doc Requests</div>
+            <div className={`hover:cursor-pointer ${isActive('/verifydocs')}`} onClick={() => navigate('/verifydocs')}>Verify NFTs</div>
+
           </>
         );
       default:
@@ -70,8 +65,8 @@ function Header() {
   };
 
   return (
-    <div className="h-12 w-full bg-[#402530] fixed top-0 flex justify-between items-center md:px-24 py-6 text-white z-30">
-      <div className="hover:cursor-pointer text-[15px] md:text-[26px] font-semibold">Bidcampus</div>
+    <div className="h-12 w-full bg-primaryBlack fixed top-0 flex justify-between items-center md:px-12 py-6 text-white z-30">
+      <div className="hover:cursor-pointer text-[10px] md:text-[20px] text-primaryGreen font-semibold">docVault</div>
 
       {/* Desktop Menu */}
       <div className='md:flex justify-evenly gap-20 text-[16px] font-medium hidden'>
