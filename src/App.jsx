@@ -8,6 +8,8 @@ import MyOrgs from './pages/MyOrgs';
 import Certificate from './pages/Certificate';
 import Requests from './pages/Requests';
 import OrgPage from './pages/OrgPage';
+import Firepage from './pages/Firepage';
+import Members from './pages/Members';
 
 function App() {
   return (
@@ -23,16 +25,7 @@ function App() {
           <Route path="/myorgs" element={<MyOrgs />} />
           <Route path='/requests' element={<Requests />} />
           <Route path="/org/:orgName" element={<OrgPage/>} />
-          {/* />
-        
-          <Route path='/signup' element={<Signup />} />
-          <Route path='/workflow' element={<WorkFlow />} />
-          <Route path='/auction' element={<Auction />} />
-          
-          
-          <Route path="/payments" element={<Payments />} />
-          <Route path="/approvals" element={<Approvals />} />
-          } */}
+          <Route path='/members' element={<Members />} />
         </Routes>
     </BrowserRouter>
   

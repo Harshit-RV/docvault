@@ -1,16 +1,29 @@
-import { useState } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { LogOutIcon, LogInIcon, PlusIcon } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { LogOutIcon, LogInIcon, PlusIcon } from 'lucide-react'
+import { requestToJoinOrgMethod, getUserNameMethod } from "../contract/vault/methods"
+import { useQuery } from 'react-query'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import useWallet from '@/hooks/useWallet';
 
 export default function Component() {
-  const [joinPopup, setJoinPopup] = useState(false);
-  const [leavePopup, setLeavePopup] = useState(false);
-  const [address, setAddress] = useState('');
-  const [selectedOrg, setSelectedOrg] = useState(null);
+  const { address, signer } = useWallet(); 
+
+  const [ address2, setAddress ] = useState('')
+  const [ message, setMessage ] = useState('')
+
+  const [selectedOrg, setSelectedOrg] = useState(null)
+
   const [organizations, setOrganizations] = useState([
     { name: 'Acme Corp', address: '0x1234...5678' },
     { name: 'TechNova', address: '0xabcd...efgh' },
@@ -20,58 +33,77 @@ export default function Component() {
 
   const navigate = useNavigate();
 
-  const handleJoinPopup = () => {
-    setJoinPopup(!joinPopup);
-  };
-
-  const handleLeavePopup = (org) => {
-    setSelectedOrg(org);
-    setLeavePopup(true);
-  };
-
-  const handleJoin = () => {
+  const handleJoin = async () => {
     if (address) {
-      setOrganizations([
-        ...organizations,
-        { name: `Org ${organizations.length + 1}`, address },
-      ]);
-      setAddress('');
-      setJoinPopup(false);
-      toast.success('Successfully joined the organization!');
+      // 0xDfCDbf47c708949c53Db81041381a580462bc582
+      await requestToJoinOrgMethod(address, '0xDfCDbf47c708949c53Db81041381a580462bc582', 'really want to join this room')
+      toast.success("Successfully joined the organization!")
     } else {
       toast.error('Please enter a valid wallet address.');
     }
   };
 
   const handleLeave = () => {
-    const updatedOrganizations = organizations.filter(
-      (org) => org !== selectedOrg
-    );
-    setOrganizations(updatedOrganizations);
-    setLeavePopup(false);
-    toast.info('You have left the organization.');
-  };
+    const updatedOrganizations = organizations.filter(org => org !== selectedOrg)
+    setOrganizations(updatedOrganizations)
+    toast.info("You have left the organization.")
+  }
 
-  const handleEnter = (org) => {
-    toast.info(`entering ${org.name}...`);
-    setTimeout(() => {
-        navigate(`/org/${org.name}`);
-    },1500);
-  };
+  // const fetchList = async () => {
+  //     const token = await getToken();
+  //     if (!token) return;
+  //     return await getList(token);
+  // }
+
+  // const { data: orgs, isLoading: orgsLoading, refetch: refetchOrgs } = useQuery('events', fetchOrgs);
 
   return (
     <div className="min-h-screen bg-primaryBlack p-16">
       <div className="flex justify-between items-center mb-14 px-12">
-        <h1 className="text-white font-bold text-3xl">My Organizations</h1>
-        <Button
-          onClick={handleJoinPopup}
-          className="bg-emerald-500 text-white font-bold hover:bg-emerald-600 transition-colors"
-        >
-          <PlusIcon className="mr-2 h-4 w-4" /> Join New
-        </Button>
+        <h1 className="text-white font-bold text-3xl">My Organizations {address}</h1>
+        <Dialog>
+          <DialogTrigger>
+            <Button 
+              className='bg-primaryGreen text-black font-bold hover:bg-primaryGreen/70 transition-colors'
+            >
+              <PlusIcon className="mr-2 h-4 w-4" /> Join New
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="bg-gray-900 border-none text-white py-7 px-8">
+            <DialogHeader>
+              <DialogTitle className="mb-6 text-xl">Request to Join New Organisation</DialogTitle>
+              <DialogDescription>
+                <input 
+                  type="text" 
+                  placeholder="Organization's Address" 
+                  className="w-full p-2 mb-4 border border-gray-600 bg-gray-700 text-white rounded focus:outline-none focus:border-primaryColor" 
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)} 
+                />
+                <input 
+                  type="text" 
+                  placeholder="Message" 
+                  className="w-full mt-3 p-2 mb-4 border border-gray-600 bg-gray-700 text-white rounded focus:outline-none focus:border-primaryColor" 
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)} 
+                />
+                <div className='w-full flex justify-end mt-2'>
+                  <Button 
+                    onClick={handleJoin}
+                    className="bg-primaryGreen text-black font-medium hover:bg-emerald-600 transition-colors"
+                  >
+                    Send Request
+                  </Button>
+                </div>
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 px-12">
+      <Button onClick={handleJoin}> handle join </Button>
+
+      {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 px-12">
         {organizations.map((org, index) => (
           <Card
             key={index}
@@ -82,17 +114,39 @@ export default function Component() {
               <p className="text-md text-gray-400">{org.address}</p>
             </CardContent>
             <CardFooter className="flex justify-between">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleLeavePopup(org)}
-                className="border-red-500 bg-red-500 text-white font-bold hover:bg-red-500 hover:text-white"
-              >
-                <LogOutIcon className="mr-2 h-4 w-4" /> Leave
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
+             
+              <Dialog>
+                <DialogTrigger>
+                  <Button 
+                    onClick={() => setSelectedOrg(org)}
+                    variant="outline" 
+                    size="sm" 
+                    className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                  >
+                    <LogOutIcon className="mr-2 h-4 w-4" /> Leave
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="bg-gray-900 border-none text-white py-7 px-8">
+                  <DialogHeader>
+                    <DialogTitle className="mb-2 text-xl">Leave Organisation</DialogTitle>
+                    <DialogDescription>
+                      <p className="text-gray-300 mb-4">Are you sure you want to leave {selectedOrg.name}?</p>
+                      <div className="flex justify-end">
+                        <Button 
+                          onClick={handleLeave}
+                          className="bg-red-500 text-white font-medium hover:bg-red-600 transition-colors"
+                        >
+                          Leave
+                        </Button>
+                      </div>
+                    </DialogDescription>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
+
+              <Button 
+                variant="outline" 
+                size="sm" 
                 onClick={() => handleEnter(org)}
                 className="border-emerald-500 bg-emerald-500 text-white font-bold hover:bg-emerald-500 hover:text-white"
               >
@@ -101,65 +155,8 @@ export default function Component() {
             </CardFooter>
           </Card>
         ))}
-      </div>
+      </div> */}
 
-      {joinPopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-gray-800 py-8 px-10 w-96 rounded-lg shadow-lg">
-            <h2 className="text-white font-semibold text-lg mb-4">
-              Join a New Organization
-            </h2>
-            <input
-              type="text"
-              placeholder="Enter Organization's Wallet Address"
-              className="w-full p-2 mb-4 border border-gray-600 bg-gray-700 text-white rounded focus:outline-none focus:border-emerald-500"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-            />
-            <div className="flex justify-end">
-              <Button
-                onClick={handleJoinPopup}
-                variant="secondary"
-                className="mr-2"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleJoin}
-                className="bg-emerald-500 text-white font-medium hover:bg-emerald-600 transition-colors"
-              >
-                Join
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {leavePopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-gray-800 py-8 px-10 w-96 rounded-lg shadow-lg">
-            <h2 className="text-white font-semibold text-lg mb-4">Confirm Leave</h2>
-            <p className="text-gray-300 mb-4">
-              Are you sure you want to leave {selectedOrg.name}?
-            </p>
-            <div className="flex justify-end">
-              <Button
-                onClick={() => setLeavePopup(false)}
-                variant="secondary"
-                className="mr-2"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleLeave}
-                className="bg-red-500 text-white font-medium hover:bg-red-600 transition-colors"
-              >
-                Leave
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
       <ToastContainer />
     </div>
   );
