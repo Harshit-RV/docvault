@@ -34,7 +34,7 @@ export default function Requests() {
     <div className='bg-gray-900 min-h-screen p-8 flex justify-center items-center pt-12'>
     <div className='w-full max-w-4xl pl-20'>
         <h1 className='text-4xl font-bold text-white mb-16'>Requests</h1>
-        <Tabs defaultValue="members" className="w-full">
+          <Tabs defaultValue="members" className="w-full">
             <div className="flex justify-start mb-8">
               <TabsList className="grid w-[300px] h-min grid-cols-2 bg-gray-600 text-white">
                 <TabsTrigger value="members" className="py-1.5 text-sm flex items-center justify-center">
@@ -47,52 +47,12 @@ export default function Requests() {
             </div>
             <TabsContent value="members">
               <div className='w-full flex-col flex gap-4'>
-                {
-                  membersLoading && (
-                    <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
-                      <span className='font-bold text-2xl'>Loading...</span>
-                    </div>
-                  ) 
-                }
-                {
-                  membersLoading || members === undefined 
-                  ? null
-                  : members.length === 0
-                    ? (
-                      <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
-                        <span className='font-bold text-2xl'>No Members</span>
-                      </div>
-                    ): (
-                      members.map((member, index) => (
-                        <p>something</p>
-                      ))
-                    )
-                }
+                something
               </div>
             </TabsContent>
             <TabsContent value="requests">
               <div className='w-full flex-col flex gap-4'>
-                {
-                  requestsLoading && (
-                    <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
-                      <span className='font-bold text-2xl'>Loading...</span>
-                    </div>
-                  ) 
-                }
-                {
-                  requestsLoading || requests === undefined 
-                  ? null
-                  : requests.length === 0
-                    ? (
-                      <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
-                        <span className='font-bold text-2xl'>No join requests</span>
-                      </div>
-                    ): (
-                      requests.map((request, index) => (
-                        <p>something</p>
-                      ))
-                    )
-                }
+                something else
               </div>
             </TabsContent>
           </Tabs>
@@ -109,9 +69,14 @@ export default function Requests() {
             />
         </div>
       <div className='grid gap-6'>
-        {requests.map((request) => (
+        {/* {requests.map((request) => (
           <RequestCard key={request.id} request={request} />
-        ))}
+        ))} */}
+        <RequestCard 
+          name='John Doe' 
+          requester='0x885690'
+          address='0x885690e5893bE8Be6EdE0A0339Cb89138a485AeC'
+        />
       </div>
     </div>
   </div>
@@ -127,21 +92,21 @@ const Tab =(props)=> {
     )
   }
 
-function RequestCard({ request }) {
+function RequestCard({ name, requester, address }) {
   return (
     <div className='bg-[#1C1F2E] rounded-lg p-4 px-6 shadow-lg w-[700px]'>
       <div className='flex justify-between items-start mb-4'>
         <div>
-          <h1 className='text-2xl font-semibold text-white mb-2'>{request.name}</h1>
+          <h1 className='text-2xl font-semibold text-white mb-2'>{name}</h1>
         </div>
       </div>
       <div className='flex items-center text-gray-400 mb-2'>
         <User size={18} className='mr-2' />
-        <span>{request.requester}</span>
+        <span>{requester}</span>
       </div>
       <div className='flex items-center text-gray-400 mb-5'>
         <WalletMinimal size={18} className='mr-2' />
-        <span>{request.address}</span>
+        <span>{address}</span>
       </div>
       <div className='flex justify-end space-x-3'>
         <button className='px-3 py-1.5 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors flex items-center'>

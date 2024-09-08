@@ -28,20 +28,11 @@ function App() {
           <Route path='/certificate' element={<Certificate />} />
           <Route path="/myorgs" element={<MyOrgs />} />
           <Route path='/requests' element={<Requests />} />
-          <Route path="/org/:orgName" element={<OrgPage/>} />
+          <Route path="/org/:orgAddress" element={<OrgPage/>} />
           <Route path='/members' element={<Members />} />
           <Route path='/copy' element={<Copy/>}/>
           <Route path="/uploadImage" element={<UploadImage/>}/>
           <Route path='/ipfshash' element={<IpfsHash/>}/>
-          {/* />
-        
-          {/* <Route path='/login' element={<Login />} />
-          <Route path='/signup' element={<Signup />} />
-          <Route path='/workflow' element={<WorkFlow />} />
-          <Route path='/auction' element={<Auction />} />
-          <Route path="/payments" element={<Payments />} />
-          <Route path="/approvals" element={<Approvals />} />
-          } */}
         </Routes>
     </BrowserRouter>
     </div>

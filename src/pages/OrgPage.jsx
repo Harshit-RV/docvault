@@ -1,16 +1,47 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import FileUpload from "@/components/FileUpload";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FileIcon, MoreVertical } from 'lucide-react'
 import { useParams } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { addNewDocumentRequestMethod, getOrgNameMethod } from "@/contract/vault/methods";
+import useWallet from '@/hooks/useWallet';
+import { v4 as uuidv4 } from 'uuid';
+
 function OrgPage() {
+  const { address } = useWallet(); 
+
   const [ activeTab, setActiveTab ] =  useState("tab1");
-  const [popup, setPopup] = useState(false);
-  const [popupTab, setPopupTab] = useState("requestNewFile");
-  const { orgName } = useParams();
-  const [files, setFiles] = useState([
+  const [ popup, setPopup ] = useState(false);
+  const [ popupTab, setPopupTab ] = useState("requestNewFile");
+  const { orgAddress } = useParams();
+
+  const [ orgName, setOrgName ] = useState('');
+
+  const [ documentType, setDocumentType ] = useState("");
+
+  const [ title, setTitle ] = useState('');
+  const [ description, setDescription ] = useState('');
+
+  const getNameFromAddress = async () => {
+    const name2 = await getOrgNameMethod(address, orgAddress);
+    setOrgName(name2);
+  }
+
+  useEffect(() => {
+    getNameFromAddress();
+  },[]);
+
+  const [ files, setFiles ] = useState([
     { id: 1, name: 'Example File.pdf', type: 'PDF', size: '2.5 MB' },
     { id: 2, name: 'Document.docx', type: 'DOCX', size: '1.8 MB' },
     { id: 3, name: 'Image.jpg', type: 'JPG', size: '3.2 MB' },
@@ -21,33 +52,43 @@ function OrgPage() {
   const handlePopupTabChange = (tabName) => {
     setPopupTab(tabName);
   };
+
   const handlePopup = () => {
     setPopup(!popup);
   };
+
   const handleTabChange =(tabName)=>{
     setActiveTab(tabName);
-}
-const handleFileChange = (event) => {
-      const file = event.target.files[0]; // Assuming only one file is selected
-  
-  if (file) {
-    // Check file type
-    const validTypes = ["image/png", "image/jpeg", "image/jpg"];
-    if (!validTypes.includes(file.type)) {
-      toast.error("Invalid file type. Only PNG, JPG, and JPEG are allowed.");
-      return;
-    }
-
-    // Check file size (50KB)
-    const maxSizeInBytes = 50 * 1024; // 50KB
-    if (file.size > maxSizeInBytes) {
-      toast.error("File size exceeds 50KB.");
-      return;
-    }
-
-    console.log("File is valid", file);
   }
-};
+
+  const onSubmitRequestVerification = () => {
+    // TODO: get all files and filter by org name.
+  }
+
+  const onNewDocumentRequest = async () => {
+    const uniqueId = uuidv4();
+    await addNewDocumentRequestMethod(address, orgAddress, uniqueId, title, description, '', documentType);
+  }
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    
+    if (file) {
+      const validTypes = ["image/png", "image/jpeg", "image/jpg"];
+      if (!validTypes.includes(file.type)) {
+        toast.error("Invalid file type. Only PNG, JPG, and JPEG are allowed.");
+        return;
+      }
+
+      const maxSizeInBytes = 50 * 1024;
+      if (file.size > maxSizeInBytes) {
+        toast.error("File size exceeds 50KB.");
+        return;
+      }
+
+      console.log("File is valid", file);
+    }
+  };
 
   return (
     <div className="bg-gray-900 h-screen px-12">
@@ -64,90 +105,111 @@ const handleFileChange = (event) => {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
             <div className="bg-gray-200 p-6 w-96 rounded-lg">
               <div className="flex mb-8 gap-2">
-                <button
-                  className={`w-1/2 py-2 rounded-md ${
-                    popupTab === "requestNewFile"
-                      ? "bg-[#402530] text-white font-medium text-[15px]"
-                      : "bg-gray-300 font-medium text-[15px]"
-                  }`}
-                  onClick={() => handlePopupTabChange("requestNewFile")}
-                >
-                  Request New File
-                </button>
-                <button
-                  className={`w-1/2 py-2 rounded-md ${
-                    popupTab === "requestVerification"
-                      ? "bg-[#402530] text-white font-medium text-[15px]"
-                      : "bg-gray-300 font-medium text-[15px]"
-                  }`}
-                  onClick={() => handlePopupTabChange("requestVerification")}
-                >
-                  Request Verification
-                </button>
+                <Tabs defaultValue="new" className="w-full">
+                  <div className="flex justify-start mb-8">
+                    <TabsList className="grid w-full h-min grid-cols-2 bg-gray-800 text-white">
+                      <TabsTrigger value="new" className="py-1.5 text-sm flex items-center justify-center">
+                        Members
+                      </TabsTrigger>
+                      <TabsTrigger value="verify" className="py-1.5 text-sm flex items-center justify-center">
+                        Requests
+                      </TabsTrigger>
+                    </TabsList>
+                  </div>
+                  <TabsContent value="new">
+                      <div>
+                        <input 
+                          type="text" 
+                          placeholder="Title" 
+                          className="rounded-lg w-full p-2 mb-4 border border-gray-600 bg-gray-700 text-white focus:outline-none focus:border-primaryColor" 
+                          value={title}
+                          onChange={(e) => setTitle(e.target.value)}
+                        />
+                        <input 
+                          type="text" 
+                          placeholder="Description" 
+                          className="rounded-lg w-full p-2 mb-4 border border-gray-600 bg-gray-700 text-white focus:outline-none focus:border-primaryColor" 
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                        />
+                        <Select value={documentType} onValueChange={setDocumentType}>
+                          <SelectTrigger className="w-full bg-white">
+                            <SelectValue placeholder="Select Doc Type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="BONAFIDE">Bonafide Certificate</SelectItem>
+                            <SelectItem value="MERIT">Merit Award Certificate</SelectItem>
+                            <SelectItem value="MEDICAL">Medical Certificate</SelectItem>
+                            <SelectItem value="SCHOOL">School leaving Certificate</SelectItem>
+                            <SelectItem value="LOR">Letter of Recommendation</SelectItem>
+                            <SelectItem value="APPOINTMENT">Appointment letter</SelectItem>
+                            <SelectItem value="OTHER">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+
+                        <div className="flex justify-end mt-8">
+                          <button
+                            type="button"
+                            className="bg-black text-white px-4 py-2 rounded mr-2"
+                            onClick={handlePopup}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            onClick={onNewDocumentRequest}
+                            className="bg-primaryGreen text-black font-medium px-4 py-2 rounded"
+                          >
+                            Request
+                          </button>
+                        </div>
+                      </div>
+                  </TabsContent>
+                  <TabsContent value="verify">
+                      <div>
+                        <Select value={documentType} onValueChange={setDocumentType}>
+                          <SelectTrigger className="w-full bg-white">
+                            <SelectValue placeholder="Select Doc Type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="BONAFIDE">Bonafide Certificate</SelectItem>
+                            <SelectItem value="MERIT">Merit Award Certificate</SelectItem>
+                            <SelectItem value="MEDICAL">Medical Certificate</SelectItem>
+                            <SelectItem value="SCHOOL">School leaving Certificate</SelectItem>
+                            <SelectItem value="LOR">Letter of Recommendation</SelectItem>
+                            <SelectItem value="APPOINTMENT">Appointment letter</SelectItem>
+                            <SelectItem value="OTHER">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+
+                        <div className="mb-4 mt-5">
+                          <FileUpload onChange={handleFileChange} />
+                        </div>
+
+                        <div className="flex justify-end">
+                          <button
+                            type="button"
+                            className="bg-black text-white px-4 py-2 rounded mr-2"
+                            onClick={handlePopup}
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            className="bg-primaryGreen text-black font-medium px-4 py-2 rounded"
+                            onClick={onSubmitRequestVerification}
+                          >
+                            Submit
+                          </button>
+                        </div>
+                      </div>
+                  </TabsContent>
+                </Tabs>
               </div>
-              
-
-              {popupTab === "requestNewFile" && (
-                <form>
-                  <div className="mb-8">
-                    <label className="block text-gray-700 font-semibold">Document Type</label>
-                    <select className="w-full border border-gray-300 p-2 mt-2 rounded">
-                      <option value="">Select Document</option>
-                      <option value="document1">Bonafide Certificate</option>
-                      <option value="document2">Merit Award Certificate</option>
-                      <option value="document2">Medical Certificate</option>
-                      <option value="document2">School leaving Certificate</option>
-                      <option value="document2">Letter of Recommendation</option>
-                      <option value="document2">Appointment letter</option>
-                    </select>
-                  </div>
-
-                  <div className="flex justify-end">
-                    <button
-                      type="button"
-                      className="bg-black text-white px-4 py-2 rounded mr-2"
-                      onClick={handlePopup}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="bg-primaryGreen text-black font-medium px-4 py-2 rounded"
-                    >
-                      Request
-                    </button>
-                  </div>
-                </form>
-              )}
-
-              {popupTab === "requestVerification" && (
-                <form>
-
-                  <div className="mb-4">
-                    <label className="block text-gray-700 font-semibold">Upload File</label>
-                    <FileUpload onChange={handleFileChange} />
-                  </div>
-
-                  <div className="flex justify-end">
-                    <button
-                      type="button"
-                      className="bg-black text-white px-4 py-2 rounded mr-2"
-                      onClick={handlePopup}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="bg-primaryGreen text-black font-medium px-4 py-2 rounded"
-                    >
-                      Submit
-                    </button>
-                  </div>
-                </form>
-              )}
             </div>
           </div>
         )}
+
         <div className='flex gap-4 bg-[#1C1F2E] w-72 rounded-lg p-2 ml-14 mb-8'>
             <Tab 
                 name="Approved" 

@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { CheckIcon, XIcon, HomeIcon, ClockIcon, FileTextIcon, UserIcon, UserPlusIcon } from 'lucide-react'
+import { CheckIcon, XIcon, UserIcon, UserPlusIcon } from 'lucide-react'
 import { useQuery } from 'react-query'
 import useWallet from '@/hooks/useWallet';
 import { getMembersMethod, getJoinRequestsMethod, getUserNameMethod, updateJoinRequestMethod } from '@/contract/vault/methods'
@@ -10,10 +10,10 @@ import { useEffect, useState } from 'react'
 import { signMessage } from '@/utils/signMessage';
 
 export default function Members() {  
+  const { address } = useWallet();
   
   const fetchMembers = async () => {
-      const address2 = '0x885690e5893bE8Be6EdE0A0339Cb89138a485AeC';
-      const result = await getMembersMethod(address2);
+      const result = await getMembersMethod(address);
       console.log('result', result);
       return result;
   }
@@ -21,8 +21,7 @@ export default function Members() {
   const { data: members, isLoading: membersLoading, refetch: refetchMembers } = useQuery('orgmembers', fetchMembers);
 
   const fetchRequests = async () => {
-      const address2 = '0x885690e5893bE8Be6EdE0A0339Cb89138a485AeC';
-      const result = await getJoinRequestsMethod(address2);
+      const result = await getJoinRequestsMethod(address);
       console.log('requests:', result);
       return result;
   }
@@ -220,13 +219,6 @@ function MemberElement(props) {
         <span className='font-bold text-lg'>{name}</span>
         <span className='text-gray-400 font-semibold text-md'>({String(props.address).slice(0, 10)}...)</span>
       </div>
-      <Button 
-          variant="ghost" 
-          size="sm"
-          className="text-red-400 hover:text-red-300 hover:bg-red-900/30 px-3 py-1"
-        >
-          Remove
-      </Button>
     </div>
   )
 }
