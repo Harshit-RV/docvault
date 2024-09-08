@@ -14,6 +14,7 @@ export default {
   		},
   		colors: {
 				primaryColor: '#007ACC',
+				primaryBackground: 'gray-900',
   			background: 'hsl(var(--background))',
 			primaryBlack: '#0D111D',
 			primaryGreen: '#27E8A7',

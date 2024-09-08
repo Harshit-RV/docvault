@@ -44,7 +44,7 @@ function VerifyDocs() {
     };
 
   return (
-    <div className='bg-[#0D111D] flex flex-col h-screen items-center pt-16 gap-8 overflow-y-auto pb-16'>
+    <div className='bg-gray-900 flex flex-col h-screen items-center pt-16 gap-8 overflow-y-auto pb-16'>
         <h1 className='text-white text-4xl font-bold mb-2'>Verify Documents</h1>
     
         <div className='flex gap-4 bg-[#1C1F2E] rounded-lg p-2'>

@@ -32,7 +32,7 @@ export default function Members() {
 
   return (
     <div className="bg-gray-900 min-h-screen min-w-full flex flex-col">
-      <nav className="bg-gray-800 w-full py-4 px-6 flex items-center justify-between">
+      {/* <nav className="bg-gray-800 w-full py-4 px-6 flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <div href="/recent" className="text-gray-300 hover:text-white flex items-center">
             <ClockIcon className="h-5 w-5 mr-1" />
@@ -47,14 +47,14 @@ export default function Members() {
           <FileTextIcon className="h-5 w-5 mr-2" />
           Verify Doc
         </Button>
-      </nav>
+      </nav> */}
 
       <div className="flex-grow flex flex-col items-center mt-10">
         {/* {address} */}
         <div className="flex-col w-full max-w-[600px] flex items-center">
           <Tabs defaultValue="members" className="w-full">
             <div className="flex justify-start mb-8">
-              <TabsList className="grid w-[300px] h-min grid-cols-2 bg-gray-600 text-white">
+              <TabsList className="grid w-[300px] h-min grid-cols-2 bg-gray-800 text-white">
                 <TabsTrigger value="members" className="py-1.5 text-sm flex items-center justify-center">
                   <UserIcon className="h-4 w-4 mr-2" />
                   Members

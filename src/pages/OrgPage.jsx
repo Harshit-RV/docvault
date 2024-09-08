@@ -50,7 +50,7 @@ const handleFileChange = (event) => {
 };
 
   return (
-    <div className="bg-[#0D111D] h-screen px-12">
+    <div className="bg-gray-900 h-screen px-12">
         <div className="flex justify-between pt-12 pl-14 pr-14 items-center mb-4">
             <h1 className="text-white font-bold text-3xl">Welcome to {orgName}</h1>
             <ToastContainer />
