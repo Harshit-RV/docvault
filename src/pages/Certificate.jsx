@@ -19,7 +19,7 @@ const CertificateForm = () => {
   const { userAddress, requestId, docType } = useParams();
 
   const [formData, setFormData] = useState({
-    documentType: '',
+    documentType: `${docType}`,
     organization: '',
     institutionName: '',
     dateOfIssue: '',
@@ -63,51 +63,76 @@ const CertificateForm = () => {
     }
   };
 
-  const generateImageUsingMetadata = (metadata) => {
-    const imageUrl = metadata.image; 
-    return imageUrl;
-  };
 
-  const handleGenerateAndUpload = async () => {
+  const handleSubmit = async () => {
     try {
-      // Fetch metadata from IPFS
-      const ipfs = await pinJsonToIPFS(jsonData);
-      console.log('IPFS Hash:', ipfs);
-      const metadata = await fetchMetadataFromIPFS(ipfs); 
-      console.log('Metadata:', metadata);
-      // Replace with your actual IPFS hash
-
-      if (metadata) {
-        // Generate the image using the metadata
-        const generatedImageUrl = generateImageUsingMetadata(metadata);
-        setImageUrl(generatedImageUrl);
-        console.log('Generated Image URL:', generatedImageUrl);
-
-        // Download the image blob
-        const imageBlob = await axios.get(generatedImageUrl, { responseType: 'blob' });
-
-        // Upload the generated image to IPFS
-        const fileData = new FormData();
-        fileData.append('file', imageBlob.data, 'generatedImage.png');
-
-        const responseData = await axios({
-          method: 'post',
-          url: 'https://api.pinata.cloud/pinning/pinFileToIPFS',
-          data: fileData,
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_PINATA_JWT}`,
-          },
-        });
-
-        const imageIpfsUrl = 'https://gateway.pinata.cloud/ipfs/' + responseData.data.IpfsHash;
-        setFileUrl(imageIpfsUrl);
-        // console.log('Image uploaded to IPFS:', imageIpfsUrl);
-        console.log('Image uploaded to IPFS:', imageIpfsUrl);
-      }
+      const response = await axios.post('http://localhost:5001/generate-certificate', formData, {
+        responseType: 'blob',
+      });
+      console.log('Certificate generated:', response);
+  
+      const url = URL.createObjectURL(response.data);
+      console.log('Generated Certificate URL:', url);
+      setImageUrl(url);
+      setDownloadUrl(url); // Set the URL for download
     } catch (error) {
-      console.error('Error generating or uploading image:', error);
+      console.error('Error generating certificate:', error);
     }
   };
+  
+  const handleGenerateAndUpload = async () => {
+    try {
+      // Step 1: Generate the certificate and get the image URL from the localhost server
+      await handleSubmit();
+      
+      // Step 2: Convert the generated image (from localhost) to a blob
+      const imageBlob = await axios.get(imageUrl, { responseType: 'blob' });
+  
+      // Step 3: Create a FormData object to upload the image blob to IPFS
+      const fileData = new FormData();
+      fileData.append('file', imageBlob.data, 'generatedImage.png');
+  
+      // Step 4: Upload the image to IPFS
+      const imageUploadResponse = await axios({
+        method: 'post',
+        url: 'https://api.pinata.cloud/pinning/pinFileToIPFS',
+        data: fileData,
+        headers: {
+          Authorization: `Bearer ${import.meta.env.VITE_PINATA_JWT}`,
+        }        
+      });
+  
+      const imageIpfsUrl = 'https://gateway.pinata.cloud/ipfs/' + imageUploadResponse.data.IpfsHash;
+      setFileUrl(imageIpfsUrl);
+      console.log('Image uploaded to IPFS:', imageIpfsUrl);
+  
+      // Step 5: Update metadata JSON with the IPFS URL of the uploaded image
+      const updatedJsonData = {
+        description: `This is a ${docType} issued by ${formData.organization}`,
+        image: imageIpfsUrl,  // Use the IPFS URL instead of the localhost URL
+        name: formData.documentType,
+        attributes: [
+          { trait_type: "Creator", value: "docVault" },
+          { trait_type: "Owner", value: formData.recipientName },
+          { trait_type: "Date Of Issue", value: formData.dateOfIssue },
+        ],
+      };
+  
+      // Step 6: Upload the updated metadata JSON to IPFS
+      const ipfsResponse = await pinJsonToIPFS(updatedJsonData);
+      console.log('IPFS Hash of Metadata:', ipfsResponse);
+  
+      // Fetch and log the metadata to confirm it's correctly uploaded
+      const metadata = await fetchMetadataFromIPFS(ipfsResponse);
+      console.log('Fetched Metadata from IPFS:', metadata);
+  
+      // You can handle further steps or UI updates here if needed.
+  
+    } catch (error) {
+      console.error('Error generating or uploading image and metadata:', error);
+    }
+  };
+  
 
   return (
     // <></>
@@ -115,7 +140,7 @@ const CertificateForm = () => {
       <h1 className="text-3xl font-bold mb-8 text-center text-primaryGreen">Generate Certificate</h1>
       
       {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {/* Document Type */}
           <div>
@@ -126,7 +151,7 @@ const CertificateForm = () => {
               onChange={handleChange}
               className="w-full border border-gray-300 p-2 mt-2 rounded-md bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-primaryGreen"
             >
-              <option value="">Select Document</option>
+              <option value="">{docType}</option>
               <option value="bonafide">Bonafide Certificate</option>
               <option value="merit-award">Merit Award Certificate</option>
             </select>
@@ -265,7 +290,6 @@ const CertificateForm = () => {
             />
           </div>
 
-          {/* Signature Date */}
           <div>
             <label className="block text-gray-700 font-semibold">Signature Date</label>
             <input
@@ -279,9 +303,9 @@ const CertificateForm = () => {
         </div>
 
         {/* Submit Button */}
-        <div className="flex justify-center">
+        {/* <div className="flex justify-center">
           <Button type="submit" className="w-full bg-primaryGreen text-white">Generate Certificate</Button>
-        </div>
+        </div> */}
       </form>
 
       {/* Display certificate */}
@@ -297,7 +321,7 @@ const CertificateForm = () => {
         </div>
       )}
 
-      <Button onClick={handleGenerateAndUpload}> json </Button>
+      <Button className="w-full bg-primaryGreen text-white" onClick={handleGenerateAndUpload}> Generate Certificate </Button>
     </div>
   );
 };
