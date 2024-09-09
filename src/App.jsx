@@ -11,13 +11,12 @@ import Members from './pages/Members';
 import Copy from './copy';
 import Header from './pages/Header';
 import IpfsHash from './pages/ipfshash'
-import { ToastContainer } from 'react-toastify';
+import Firepage from './pages/Firepage';
 
 function App() {
   return (
     <div className='flex flex-col'>
       <BrowserRouter>
-      {/* {location.pathname !== '/login' && <Header />} */}
       <HeaderWithConditionalRendering />
 
         <Routes>

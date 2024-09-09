@@ -1,5 +1,6 @@
 import { Web3 } from 'web3';
 import { providerUrl, abi, contractAddress } from './constants'
+import { ethers } from 'ethers';
 
 const web3 = new Web3(providerUrl);
 const contract = new web3.eth.Contract(abi, contractAddress);
@@ -8,6 +9,16 @@ const contract = new web3.eth.Contract(abi, contractAddress);
 export async function requestToJoinOrgMethod(address, orgAddress, description) {
     try {
     const result = await contract.methods.requestToJoinOrg(orgAddress, description)
+        .send({ from: address , gas : 2000000});
+        console.log(result);
+    } catch(error) {
+        console.error(" there was an error", error);
+    }
+}
+
+export async function myAddressMethod(address) {
+    try {
+    const result = await contract.methods.myAddress()
         .send({ from: address , gas : 2000000});
         console.log(result);
     } catch(error) {
@@ -168,3 +179,19 @@ export async function deleteNewDocumentRequestMethod(address, id) {
         console.error(" there was an error", error);
     }
 }
+
+export const getitbro = async (signer) => {
+    try {
+      const newContract = new ethers.Contract(contractAddress, abi, signer);
+    //   const result = await contract.methods.registerUser(name)
+    //   .send({ from: address , gas : 2000000});
+    //   console.log('user registered: ', result);
+    
+      const tx = await newContract.registerUser('Harshit Rai Verma 2');
+      
+      await tx.wait();
+      console.log("Minting successful. Transaction hash:", tx.hash);
+    } catch (error) {
+      console.error("Minting failed:", error);
+    }
+};
