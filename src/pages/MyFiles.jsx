@@ -7,6 +7,10 @@ import { Button } from "@/components/ui/button";
 import axios from 'axios';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/ui/dialog"; // Assuming these components exist
+import { getAllNFTs } from '../contract/methods';
+import { useQuery } from 'react-query';
+import { fetchJsonFromIPFS } from "@/utils/fetchJsonFromIpfs";
+import React, { useEffect } from 'react';
 
 function MyFiles() {
   const [activeTab, setActiveTab] = useState("tab1");
@@ -26,78 +30,109 @@ function MyFiles() {
   const handlePopup = () => {
     setPopup(!popup);
   };
+
   const handleTabChange =(tabName)=>{
     setActiveTab(tabName);
-}
-const handleFileChange = async (event) => {
-  const file = event.target.files[0];
-  console.log("Selected file:", file); // Add this line to log the selected file
+  }
 
-  setSelectedFile(file);
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    console.log("Selected file:", file); // Add this line to log the selected file
 
-  if (file) {
-      const validTypes = ["image/png", "image/jpeg", "image/jpg"];
-      if (!validTypes.includes(file.type)) {
-          toast.error("Invalid file type. Only PNG, JPG, and JPEG are allowed.");
-          return;
-      }
+    setSelectedFile(file);
 
-      const maxSizeInBytes = 50 * 1024;
-      if (file.size > maxSizeInBytes) {
-          toast.error("File size exceeds 50KB.");
-          return;
-      }
-
-      const formData = new FormData();
-      formData.append('image', file);
-
-      try {
-          console.log("Uploading file..."); // Add this line to log the upload attempt
-          const response = await axios.post('http://localhost:5002/upload', formData);
-
-          // Check if 'error' is in the response
-          if (response.data.error) {
-              toast.error(`Backend Error: ${response.data.error}`);
-          } else if (response.data.result) {
-              // Safely check and use result
-              const result = response.data.result;
-              if (typeof result === 'string' && result.includes('blurry')) {
-                  toast.error('The image is blurry.');
-              } else if(typeof result === 'string' && result.includes('rejected')){
-                  toast.error('The image did not pass OCR test');
-              }
-              else if (typeof result === 'string' && result.includes('clear')) {
-                  toast.success('The image is clear and passes OCR test');
-          } else {
-              toast.error('Unexpected response from the server.');
-          }
-      }
-
-      const predictionResponse = await axios.post('http://127.0.0.1:5000/predict', formData);
-        if (predictionResponse.data.prediction) {
-          const prediction = predictionResponse.data.prediction;
-          if (prediction === 1) {
-            setPredictionResult("Document passed edge detection test.");
-            toast.success("Document passed edge detection test.");
-          } else {
-            setPredictionResult("Document did not pass edge detection test.");
-            toast.error("Document did not pass edge detection test.");
-          }
-        } else {
-          toast.error('Unexpected response from the prediction server.');
+    if (file) {
+        const validTypes = ["image/png", "image/jpeg", "image/jpg"];
+        if (!validTypes.includes(file.type)) {
+            toast.error("Invalid file type. Only PNG, JPG, and JPEG are allowed.");
+            return;
         }
 
-      }
-      
-      catch (error) {
-          toast.error('Error uploading the image.');
-          console.error('Error:', error.response ? error.response.data : error.message); // Log detailed error
-      }
+        const maxSizeInBytes = 50 * 1024;
+        if (file.size > maxSizeInBytes) {
+            toast.error("File size exceeds 50KB.");
+            return;
+        }
 
-      console.log("File is valid", file);
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            console.log("Uploading file..."); // Add this line to log the upload attempt
+            const response = await axios.post('http://localhost:5002/upload', formData);
+
+            // Check if 'error' is in the response
+            if (response.data.error) {
+                toast.error(`Backend Error: ${response.data.error}`);
+            } else if (response.data.result) {
+                // Safely check and use result
+                const result = response.data.result;
+                if (typeof result === 'string' && result.includes('blurry')) {
+                    toast.error('The image is blurry.');
+                } else if(typeof result === 'string' && result.includes('rejected')){
+                    toast.error('The image did not pass OCR test');
+                }
+                else if (typeof result === 'string' && result.includes('clear')) {
+                    toast.success('The image is clear and passes OCR test');
+            } else {
+                toast.error('Unexpected response from the server.');
+            }
+        }
+
+        const predictionResponse = await axios.post('http://127.0.0.1:5000/predict', formData);
+          if (predictionResponse.data.prediction) {
+            const prediction = predictionResponse.data.prediction;
+            if (prediction === 1) {
+              setPredictionResult("Document passed edge detection test.");
+              toast.success("Document passed edge detection test.");
+            } else {
+              setPredictionResult("Document did not pass edge detection test.");
+              toast.error("Document did not pass edge detection test.");
+            }
+          } else {
+            toast.error('Unexpected response from the prediction server.');
+          }
+
+        }
+        
+        catch (error) {
+            toast.error('Error uploading the image.');
+            console.error('Error:', error.response ? error.response.data : error.message); // Log detailed error
+        }
+
+        console.log("File is valid", file);
+    }
+  };
+
+  const fetchFiles = async () => {
+    const walletAddress = localStorage.getItem('walletAddress');
+    const result = await getAllNFTs(walletAddress);
+    // "ipfs://QmZA6dUoe6CDAbhnxBWJVo79GqscPFxYrbCf3YaVNvDwxv"
+    const res = await fetchMetadataFromIPFS('QmSxWzVwpTsQEDy8KxGXLbJhTf9W81irnaNbgXM4E1TDCp');
+    console.log('all files content: ', res);
+    console.log('all files: ', result);
+    return result;
   }
-};
 
+  const fetchMetadataFromIPFS = async (ipfsHash) => {
+    try {
+      const metadataUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
+  
+      const response = await fetch(metadataUrl);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch metadata');
+      }
+  
+      const metadata = await response.json();
+      return JSON.parse(metadata);
+    } catch (error) {
+      console.error('Error fetching metadata from IPFS:', error);
+      return null;
+    }
+  };
+
+  const { data: orgs, isLoading: orgsLoading } = useQuery('user-orgs2', fetchFiles);
 
 
   return (
@@ -249,3 +284,5 @@ function FileCard({ file, deleteFile }) {
 }
 
 export default MyFiles
+
+// App.jsx or any component file
