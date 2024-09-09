@@ -14,6 +14,8 @@ function MyFiles() {
   const [popupTab, setPopupTab] = useState("requestNewFile");
   const [selectedFile, setSelectedFile] = useState(null);
   const [predictionResult, setPredictionResult] = useState(null);
+  const [success, setSuccess] = useState("")
+
 
   const [files, setFiles] = useState([
     { id: 1, name: 'Example File.pdf', type: 'PDF', size: '2.5 MB' },
@@ -36,15 +38,15 @@ const handleFileChange = async (event) => {
   setSelectedFile(file);
 
   if (file) {
-      const validTypes = ["image/png", "image/jpeg", "image/jpg"];
+      const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/pdf"];
       if (!validTypes.includes(file.type)) {
-          toast.error("Invalid file type. Only PNG, JPG, and JPEG are allowed.");
+          toast.error("Invalid file type. Only PNG, JPG, JPEG are allowed.");
           return;
       }
 
       const maxSizeInBytes = 50 * 1024;
       if (file.size > maxSizeInBytes) {
-          toast.error("File size exceeds 50KB.");
+          toast.error("File size less than 50KB.");
           return;
       }
 
@@ -54,49 +56,50 @@ const handleFileChange = async (event) => {
       try {
           console.log("Uploading file..."); // Add this line to log the upload attempt
           const response = await axios.post('http://localhost:5002/upload', formData);
+          const predictionResponse = await axios.post('http://127.0.0.1:5000/predict', formData);
+
 
           // Check if 'error' is in the response
           if (response.data.error) {
               toast.error(`Backend Error: ${response.data.error}`);
-          } else if (response.data.result) {
+          } 
+          
+          else if (response.data.result) {
               // Safely check and use result
               const result = response.data.result;
               if (typeof result === 'string' && result.includes('blurry')) {
                   toast.error('The image is blurry.');
               } else if(typeof result === 'string' && result.includes('rejected')){
-                  toast.error('The image did not pass OCR test');
+                  toast.error('The image did not passes OCR test');
               }
-              else if (typeof result === 'string' && result.includes('clear')) {
-                  toast.success('The image is clear and passes OCR test');
-          } else {
-              toast.error('Unexpected response from the server.');
-          }
-      }
-
-      const predictionResponse = await axios.post('http://127.0.0.1:5000/predict', formData);
-        if (predictionResponse.data.prediction) {
+              
+      else if (predictionResponse.data.prediction) {
           const prediction = predictionResponse.data.prediction;
           if (prediction === 1) {
             setPredictionResult("Document passed edge detection test.");
-            toast.success("Document passed edge detection test.");
+            setSuccess("true")
+            toast.success("Document passed all tests.");
           } else {
             setPredictionResult("Document did not pass edge detection test.");
             toast.error("Document did not pass edge detection test.");
           }
-        } else {
+        }
+       } else {
           toast.error('Unexpected response from the prediction server.');
         }
 
       }
-      
+    
       catch (error) {
           toast.error('Error uploading the image.');
+          setSuccess("false")
           console.error('Error:', error.response ? error.response.data : error.message); // Log detailed error
       }
 
       console.log("File is valid", file);
-  }
-};
+    }
+  
+  };
 
 
 
@@ -158,7 +161,13 @@ const handleFileChange = async (event) => {
               <TabsContent value="requestVerification">
                 <form>
                   <div className="mb-4  w-[40vh]">
+                    <div className="flex justify-between justify-content items-center">
                     <label className="block text-gray-300 font-semibold">Upload File</label>
+                    {
+                      success=="true"?
+                      <div className="text-green-600">File Uploaded</div>: success==="false"?
+                       <div className=" text-red-600"> File Not Uploaded</div>: <div></div>
+                                          }</div>
                     <FileUpload type="file" onChange={handleFileChange} />
                   </div>
 
