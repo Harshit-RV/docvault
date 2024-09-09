@@ -133,18 +133,17 @@ const CertificateForm = () => {
     //           ) : null
     //         )}
 
-    //         {/* Submit Button */}
-    //         <div className="flex justify-end">
-    //           <button
-    //             type="submit"
-    //             className="bg-primaryGreen text-black font-medium px-6 py-2 rounded hover:bg-green-700 transition-transform duration-300 transform hover:scale-105"
-    //           >
-    //             Generate Certificate
-    //           </button>
-    //         </div>
-    //       </form>
-    //     </>
-    //   )
+            {/* Submit Button */}
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                className="bg-primaryGreen text-black font-medium px-6 py-2 rounded hover:bg-green-700 transition-transform duration-300 transform hover:scale-105"
+              >
+                Generate Certificate
+              </button>
+            </div>
+          {/* </form> */}
+        {/* </> */}
 
 
     //   {/* Display Generated Certificate */}
