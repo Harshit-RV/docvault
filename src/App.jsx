@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import TestPage from './pages/TestPage';
 import MyFiles from './pages/MyFiles';
 import VerifyDocs from './pages/VerifyDocs';
@@ -7,7 +7,6 @@ import MyOrgs from './pages/MyOrgs';
 import Certificate from './pages/Certificate';
 import Requests from './pages/Requests';
 import OrgPage from './pages/OrgPage';
-import Firepage from './pages/Firepage';
 import Members from './pages/Members';
 import Copy from './copy';
 import Header from './pages/Header';
@@ -18,8 +17,8 @@ function App() {
   return (
     <div className='flex flex-col'>
       <BrowserRouter>
-        <ToastContainer />
-        <Header/>
+      {/* {location.pathname !== '/login' && <Header />} */}
+      <HeaderWithConditionalRendering />
 
         <Routes>
           <Route path='/' element={<TestPage />} />
@@ -39,5 +38,11 @@ function App() {
     </div>
   )
 }
+
+const HeaderWithConditionalRendering = () => {
+  const location = useLocation();
+
+  return location.pathname !== '/login' ? <Header /> : null;
+};
 
 export default App

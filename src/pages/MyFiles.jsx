@@ -62,10 +62,10 @@ const handleFileChange = async (event) => {
               if (typeof result === 'string' && result.includes('blurry')) {
                   toast.error('The image is blurry.');
               } else if(typeof result === 'string' && result.includes('rejected')){
-                  toast.error('The image did not passes OCR test');
+                  toast.error('The image did not pass OCR test');
               }
               else if (typeof result === 'string' && result.includes('clear')) {
-                  toast.success('The image is clear and passed OCR test');
+                  toast.success('The image is clear and passes OCR test');
           } else {
               toast.error('Unexpected response from the server.');
           }
@@ -138,7 +138,7 @@ const handleFileChange = async (event) => {
                 <form>
                   <div className="mb-4  w-[40vh]">
                     <label className="block text-gray-300 font-semibold">Upload File</label>
-                    <FileUpload onChange={handleFileChange} />
+                    <FileUpload type="file" onChange={handleFileChange} />
                   </div>
 
                   <div className="flex justify-end">
