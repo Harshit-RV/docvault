@@ -64,10 +64,10 @@ const handleFileChange = async (event) => {
               if (typeof result === 'string' && result.includes('blurry')) {
                   toast.error('The image is blurry.');
               } else if(typeof result === 'string' && result.includes('rejected')){
-                  toast.error('The image did not passes OCR test');
+                  toast.error('The image did not pass OCR test');
               }
               else if (typeof result === 'string' && result.includes('clear')) {
-                  toast.success('The image is clear and passed OCR test');
+                  toast.success('The image is clear and passes OCR test');
           } else {
               toast.error('Unexpected response from the server.');
           }

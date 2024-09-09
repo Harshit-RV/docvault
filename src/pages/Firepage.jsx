@@ -18,19 +18,19 @@ function Firepage() {
 
     const mintNFT2 = async () => {
         const aakash = '0x260192b1B8b4ecDeF2EeC2C02Bd9Ae15011464a5';
-        const meta = 'QmZA6dUoe6CDAbhnxBWJVo79GqscPFxYrbCf3YaVNvDwxv';
+        const meta = 'QmSxWzVwpTsQEDy8KxGXLbJhTf9W81irnaNbgXM4E1TDCp';
         await mintNFT('0x7EC8e6614A2E3A1E4d6e321376a608666C8B6f8d', '0x7EC8e6614A2E3A1E4d6e321376a608666C8B6f8d', meta);
     }
     const safeMint2 = async () => {
         const aakash = '0x260192b1B8b4ecDeF2EeC2C02Bd9Ae15011464a5';
-        const meta = 'QmZA6dUoe6CDAbhnxBWJVo79GqscPFxYrbCf3YaVNvDwxv';
+        const meta = 'QmSxWzVwpTsQEDy8KxGXLbJhTf9W81irnaNbgXM4E1TDCp';
         await safeMintNFT(address, aakash, meta);
     }
     const paytomint = async () => {
         const aakash = '0x260192b1B8b4ecDeF2EeC2C02Bd9Ae15011464a5';
-        const aayushi = '0x91d564EBceC4Fb617e77D1d11b3Af77f13336309';
-        const meta = 'QmSxWzVwpTsQEDy8KxGXLbJhTf9W81irnaNbgXM4E1TDCp';
-        await payToMint2(signer, aakash, meta);
+        const aayushi = '0x53C22E3fdF8Cf8c23944889f60eEC7263C2A3F2c';
+        const meta = 'QmUmtxCWQFxQwMdfNPwQBrf9HRo7N7gwpz3ibP6ARXd93K';
+        await payToMint2(signer, aayushi, meta);
     }
 
     const getBalance2 = async () => {
@@ -49,6 +49,7 @@ function Firepage() {
     return (
       <div>
           <h5>Your Balance: {balance}</h5>
+          <h5>Your address: {address}</h5>
           <button onClick={getBalance2}>Show My Balance</button>
           <Button onClick={getBalance3}>get coint</Button>
           <Button onClick={() => getAllNFTs(address)}>get NFTs</Button>

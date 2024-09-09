@@ -24,6 +24,15 @@ const TestPage = () => {
   console.log(signer)
   }
 
+  async function isConnected() {
+    const accounts = await window.ethereum.request({method: 'eth_accounts'});       
+    if (accounts.length) {
+       console.log(`You're connected to: ${accounts[0]}`);
+    } else {
+       console.log("Metamask is not connected");
+    }
+ }
+
   return (
     <div className='flex flex-col gap-10'>
       <p>Connected Address: {address}</p>
@@ -32,6 +41,7 @@ const TestPage = () => {
       {/* <Button onClick={testFunction}>test 1</Button> */}
       <Button onClick={getBalanceFromAddress}>show balance</Button>
       <Button onClick={something}>show something</Button>
+      <Button onClick={isConnected}>is connected</Button>
       <h5>Your Balance: {String(balance)}</h5>
       <button onClick={() => getBalance()}>Show My Balance</button>
     </div>

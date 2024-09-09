@@ -14,8 +14,8 @@ function Login() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col justify-center md:flex-row px-8">
-      <div className="md:w-1/2 flex flex-col justify-center items-center p-8 pt-2">
+    <div className="min-h-screen bg-gray-900 flex justify-center md:flex-row px-8">
+      <div className="flex flex-col justify-center items-center p-8 pt-2">
         <img 
           className="rounded-lg shadow-2xl mb-8 max-w-md w-full" 
           src="https://nanonets.com/blog/content/images/2022/06/shutterstock_1785042593.jpg" 
@@ -28,16 +28,16 @@ function Login() {
       </div>
       
       <div className="md:w-1/2 flex justify-center items-center p-8 pt-2 ">
-        <Card className="w-full max-w-md bg-gray-800 text-white border-gray-700 h-[60vh]">
+        <Card className="w-full max-w-md py-2 bg-gray-800 text-white border-gray-700 h-min">
           <CardHeader>
-            <CardTitle className="text-3xl pt-2 font-bold text-center">Welcome to docVault</CardTitle>
+            <CardTitle className="text-3xl font-bold text-center">Welcome to docVault</CardTitle>
             <CardDescription className="text-gray-400 text-center">
               Connect your wallet to get started
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
             <Tabs defaultValue="user" className="w-3/4 pt-4">
-              <TabsList className="grid w-full grid-cols-2 mb-16">
+              <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger 
                 value="user" 
                 className="text-black data-[state=active]:text-white data-[state=active]:bg-gray-600">
@@ -57,17 +57,6 @@ function Login() {
               </TabsContent>
             </Tabs>
           </CardContent>
-          {/* <CardFooter>
-            <p className="text-sm text-gray-400 text-center w-full">
-              Not registered?{' '}
-              <span 
-                className="text-emerald-500 hover:underline cursor-pointer"
-                onClick={() => navigate('/signup')}
-              >
-                Sign Up
-              </span>
-            </p>
-          </CardFooter> */}
         </Card>
       </div>
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
@@ -96,7 +85,7 @@ function UserForm({ navigate }) {
         await registerUserMethod(account, name);
         localStorage.setItem('role', 'user');
         toast.success("Successfully signed up as a user!");
-        navigate('/user-dashboard'); // Navigate to user's dashboard
+        navigate('/myfiles'); // Navigate to user's dashboard
       } else {
         const userName = await getUserNameMethod(account, account);
         if (userName == null) {
@@ -104,7 +93,7 @@ function UserForm({ navigate }) {
           return;
         }
         toast.success("Successfully signed in as a user!");
-        navigate('/user-dashboard'); // Navigate to user's dashboard
+        navigate('/myfiles');
       }
     } catch (error) {
       console.error("Error:", error);
@@ -125,7 +114,7 @@ function UserForm({ navigate }) {
       />
       <Button 
         onClick={() => handleConnect(true)}
-        className="w-full bg-gray-800 border border-primaryGreen hover:bg-emerald-700 text-primaryGreen"
+        className="w-full bg-gray-800 border border-primaryGreen hover:bg-gray-700 text-primaryGreen"
         disabled={isLoading}
       >
         {isLoading ? 'Connecting...' : 'Connect and Sign Up'}
@@ -169,7 +158,7 @@ function OrganizationForm({ navigate }) {
         await registerOrganisationMethod(account, name);
         localStorage.setItem('role', 'org');
         toast.success("Successfully signed up as an organization!");
-        navigate('/org-dashboard'); // Navigate to organization's dashboard
+        navigate('/members'); 
       } else {
         const orgName = await getOrgNameMethod(account, account);
         if (orgName == null) {
@@ -199,7 +188,7 @@ function OrganizationForm({ navigate }) {
       />
       <Button 
         onClick={() => handleConnect(true)}
-        className="w-full bg-gray-800 border border-primaryGreen hover:bg-emerald-700 text-primaryGreen"
+        className="w-full bg-gray-800 border border-primaryGreen hover:bg-gray-700 text-primaryGreen"
         disabled={isLoading}
       >
         {isLoading ? 'Connecting...' : 'Connect and Sign Up'}
