@@ -1,7 +1,23 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Button } from "@/components/ui/button";
+import { useParams } from 'react-router-dom';
+import { pinJsonToIPFS } from '@/utils/uploadJsonToIpfs';
+
+const jsonData = {
+	description: "For testing docVault",
+	image: "https://media.disneylandparis.com/d4th/en-usd/images/HD13302_2_2050jan01_world_disneyland-park-dlp-website-visual_5-2_tcm1861-248638.jpg?w=1920&f=webp",
+	name: "Disney Castle",
+	attributes: [
+		{ trait_type: "Creator", value: "Starfish" },
+		{ trait_type: "Company", value: "Disney" },
+		{ trait_type: "Mouth",value: "Surprised" },
+	]
+};
 
 const CertificateForm = () => {
+  const { userAddress, requestId, docType } = useParams();
+
   const [formData, setFormData] = useState({
     institutionName: '',
     dateOfIssue: '',
@@ -14,6 +30,7 @@ const CertificateForm = () => {
     authorizedDesignation: '',
     signatureDate: '',
   });
+
   const [imageUrl, setImageUrl] = useState('');
   const [downloadUrl, setDownloadUrl] = useState('');
   const [fileUrl, setFileUrl] = useState('');
@@ -58,8 +75,11 @@ const CertificateForm = () => {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-gray-50 shadow-lg rounded-lg mt-10">
-      {!imageUrl && (
+    <div className="p-6 max-w-4xl mx-auto bg-gray-50 shadow-lg rounded-lg mt-10 flex flex-col">
+      {requestId}
+      {docType}
+      {userAddress}
+      {/* {!imageUrl && (
         <>
           <h1 className="text-2xl font-bold mb-6 text-center">Generate Certificate</h1>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -85,6 +105,7 @@ const CertificateForm = () => {
           </form>
         </>
       )}
+
       {imageUrl && (
         <div className="mt-6 text-center h-full">
           <h2 className="text-xl font-semibold mb-10">Generated Certificate</h2>
@@ -104,7 +125,9 @@ const CertificateForm = () => {
             </div>
           )}
         </div>
-      )}
+      )} */}
+
+      <Button onClick={() => pinJsonToIPFS(jsonData)}> json </Button>
     </div>
   );
 };

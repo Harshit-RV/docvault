@@ -3,7 +3,7 @@ import { connectToGanache, connectToSepolia }  from './walletAdapter'
 
 export const connectWallet = async (role) => {
   try {
-    await connectToGanache();
+    await connectToSepolia();
     const currentProvider = detectCurrentProvider();
     if (currentProvider) {
       await currentProvider.request({ method: 'eth_requestAccounts' });
@@ -34,7 +34,7 @@ const detectCurrentProvider = () => {
 
 export const getBalance = async (account) => {
     try {
-        await connectToGanache();
+        await connectToSepolia();
         const currentProvider = detectCurrentProvider();
         if (currentProvider) {
           const web3 = new Web3(currentProvider);

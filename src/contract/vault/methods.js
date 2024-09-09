@@ -148,3 +148,23 @@ export async function getUserOrganizationsMethod(address) {
         console.error(" there was an error", error);
     }
 }
+
+export async function deleteVerificationRequestMethod(address, id) {
+    try {
+      const result = await contract.methods.deleteVerificationRequest(id).send({ from: address , gas : 4000000});
+      console.log(result);
+    
+    } catch(error) {
+        console.error(" there was an error", error);
+    }
+}
+
+export async function deleteNewDocumentRequestMethod(address, id) {
+    try {
+      const result = await contract.methods.deleteNewDocumentRequest(id).send({ from: address , gas : 4000000});
+      console.log(result);
+    
+    } catch(error) {
+        console.error(" there was an error", error);
+    }
+}

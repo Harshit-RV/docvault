@@ -1,98 +1,94 @@
 import { User, Check, X , WalletMinimal} from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery } from 'react-query'
-import { getMembersMethod, getJoinRequestsMethod, getUserNameMethod, updateJoinRequestMethod } from '@/contract/vault/methods'
+import { getUserNameMethod, getNewDocumentRequestsMethod, deleteNewDocumentRequestMethod, deleteVerificationRequestMethod } from '@/contract/vault/methods'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-
+import useWallet from '@/hooks/useWallet';
+import { CheckIcon, XIcon } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { signMessage } from '@/utils/signMessage';
+import { useNavigate } from 'react-router-dom';
 
 export default function Requests() {
-  const [activeTab, setActiveTab] = useState('tab1')
-  
-  const handleTabChange = (tabName) => {
-      setActiveTab(tabName);
-  }
 
-  const fetchMembers = async () => {
-    const address2 = '0xDfCDbf47c708949c53Db81041381a580462bc582';
-    const result = await getMembersMethod(address2);
-    console.log('result', result);
+  const { address } = useWallet(); 
+
+  const fetchNewDocRequests = async () => {
+    const address2 = '0x885690e5893bE8Be6EdE0A0339Cb89138a485AeC';
+    const result = await getNewDocumentRequestsMethod(address2);
+    console.log('new doc requests:', result);
     return result;
   }
 
-  const { data: members, isLoading: membersLoading, refetch: refetchMembers } = useQuery('orgmembers', fetchMembers);
-
-  const fetchRequests = async () => {
-      const address2 = '0xDfCDbf47c708949c53Db81041381a580462bc582';
-      const result = await getJoinRequestsMethod(address2);
-      console.log('requests:', result);
-      return result;
-  }
-
-  const { data: requests, isLoading: requestsLoading, refetch: refetchRequests } = useQuery('requests', fetchRequests);
+  const { data: newDocRequests, isLoading: newDocLoading, refetch: refetchNewDoc } = useQuery('new-doc-requests', fetchNewDocRequests);
 
   return (
-    <div className='bg-gray-900 min-h-screen p-8 flex justify-center items-center pt-12'>
-    <div className='w-full max-w-4xl pl-20'>
-        <h1 className='text-4xl font-bold text-white mb-16'>Requests</h1>
+    <div className='bg-gray-900 min-h-screen p-8 flex justify-center pt-12'>
+      <div className='w-full max-w-4xl pl-20'>
           <Tabs defaultValue="members" className="w-full">
             <div className="flex justify-start mb-8">
-              <TabsList className="grid w-[300px] h-min grid-cols-2 bg-gray-600 text-white">
+              <TabsList className="grid  h-min grid-cols-2 bg-gray-600 text-white">
                 <TabsTrigger value="members" className="py-1.5 text-sm flex items-center justify-center">
-                  Members
+                  New Document Requests
                 </TabsTrigger>
                 <TabsTrigger value="requests" className="py-1.5 text-sm flex items-center justify-center">
-                  Requests
+                  Verification Requests
                 </TabsTrigger>
               </TabsList>
             </div>
             <TabsContent value="members">
-              <div className='w-full flex-col flex gap-4'>
+              <div className='w-full flex-col flex gap-4 text-white'>
                 something
               </div>
             </TabsContent>
             <TabsContent value="requests">
-              <div className='w-full flex-col flex gap-4'>
+              <div className='w-full flex-col flex gap-4 text-white'>
                 something else
               </div>
             </TabsContent>
           </Tabs>
-        <div className='flex gap-4 bg-[#1C1F2E] w-72 rounded-lg p-2 mb-8'>
-            <Tab 
-                name="New Files" 
-                active={activeTab==="tab1"} 
-                onClick={()=>handleTabChange("tab1")} 
+          <div className='grid gap-6'>
+              {
+                newDocLoading && (
+                  <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
+                    <span className='font-bold text-2xl'>Loading...</span>
+                  </div>
+                ) 
+              }
+              {
+                newDocLoading || newDocRequests === undefined 
+                ? null
+                : newDocRequests.length === 0
+                  ? (
+                    <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
+                      <span className='font-bold text-2xl'>No requests</span>
+                    </div>
+                  ): (
+                    newDocRequests.map((request, index) => (
+                      <RequestCard 
+                        key={index}
+                        id={request.id}
+                        title={request.title}
+                        description={request.description}
+                        docType={request.docType}
+                        publisher={request.publisher}
+                        newDoc={true}
+                      />
+                    ))
+                  )
+              }
+            <RequestCard 
+              name='John Doe' 
+              requester='0x885690'
+              address='0x885690e5893bE8Be6EdE0A0339Cb89138a485AeC'
             />
-            <Tab 
-                name="Verifications" 
-                active={activeTab==="tab2"} 
-                onClick={()=>handleTabChange("tab2")} 
-            />
-        </div>
-      <div className='grid gap-6'>
-        {/* {requests.map((request) => (
-          <RequestCard key={request.id} request={request} />
-        ))} */}
-        <RequestCard 
-          name='John Doe' 
-          requester='0x885690'
-          address='0x885690e5893bE8Be6EdE0A0339Cb89138a485AeC'
-        />
+          </div>
       </div>
     </div>
-  </div>
   )
 }
-const Tab =(props)=> {
-    const tabClass = props.active ? 'bg-white' : 'bg-gray-500';
-    return(
-        <div className={`w-36 py-1 text-[15px] font-medium flex items-center justify-center rounded-md cursor-pointer ${tabClass}`} onClick={props.onClick}>
-            {props.name}
-        </div>
-  
-    )
-  }
 
-function RequestCard({ name, requester, address }) {
+function RequestCard2({ name, requester, address }) {
   return (
     <div className='bg-[#1C1F2E] rounded-lg p-4 px-6 shadow-lg w-[700px]'>
       <div className='flex justify-between items-start mb-4'>
@@ -117,6 +113,86 @@ function RequestCard({ name, requester, address }) {
           <Check size={18} className='mr-2' />
           Approve
         </button>
+      </div>
+    </div>
+  )
+}
+
+function RequestCard(props) {
+  const { address } = useWallet(); 
+  const navigate = useNavigate();
+
+  const [ name, setName ] = useState('');
+
+  const getNameFromAddress = async () => {
+    const name2 = await getUserNameMethod(address, props.address);
+    setName(name2);
+  }
+
+  useEffect(() => {
+    getNameFromAddress();
+  },[]);
+
+  const handleUpdate = async (update) => {
+    if (props.newDoc) {
+      if (update === 'REJECTED') {
+        await deleteVerificationRequestMethod(address, props.id);
+      } else {
+        navigate(`/certificate/${props.publisher}/${props.id}/type/${props.docType}`);
+      }
+      // TODO: handle new doc request
+    } else {
+      // TODO: handle new doc request
+    }
+    // const { r, s, v, hashedMessage } = await signMessage();
+    // if (update === 'ACCEPTED') {
+    //   await updateJoinRequestMethod(address, props.address, 'ACCEPTED', hashedMessage, v, r, s);
+    // } else if (update === 'REJECTED') {
+    //   await updateJoinRequestMethod(address, props.address, 'REJECTED', hashedMessage, v, r, s);
+    // } else {
+    //   await updateJoinRequestMethod(address, props.address, 'BLOCKED', hashedMessage, v, r, s);
+    // }
+    // await deleteNewDocumentRequestMethod(address, props.id);
+    // props.refetchMembers();
+    // props.refetchRequests();
+  }
+
+  return (
+    <div className="w-full bg-gray-800 rounded-2xl px-6 py-4 text-gray-100 gap-2 flex-col flex">
+      <div className='flex gap-2 items-baseline'>
+        <span className='font-black text-lg'>{props.title}</span>
+        <span className='text-gray-400 font-semibold text-md'>({String(props.address).slice(0, 10)}...)</span>
+      </div>
+      <span className='text-gray-400 text-sm font-semibold mb-3'>{props.description}</span>
+      <div className='flex justify-end items-center'>
+        {/* <Button 
+          onClick={() => handleUpdate('BLOCKED')}
+          variant="ghost" 
+          size="sm"
+          className="text-red-400 hover:text-red-300 hover:bg-red-900/30 px-3 py-1"
+        >
+          Block User
+        </Button> */}
+        <div className='flex gap-3'>
+          <Button 
+            onClick={() => handleUpdate('REJECTED')}
+            variant="ghost" 
+            size="icon"
+            className="p-0 h-8 w-8 bg-gray-600 hover:bg-gray-500 text-white"
+            aria-label="Reject"
+          >
+            <XIcon className="h-4 w-4" />
+          </Button>
+          <Button 
+            onClick={() => handleUpdate('ACCEPTED')}
+            variant="ghost" 
+            size="icon"
+            className="p-0 h-8 w-8 bg-primaryGreen hover:bg-primaryGreen/70 text-black"
+            aria-label="Accept"
+          >
+            <CheckIcon className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </div>
   )

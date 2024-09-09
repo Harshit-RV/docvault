@@ -11,6 +11,7 @@ import Members from './pages/Members';
 import Copy from './copy';
 import Header from './pages/Header';
 import IpfsHash from './pages/ipfshash'
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
@@ -21,10 +22,11 @@ function App() {
 
         <Routes>
           <Route path='/' element={<TestPage />} />
+          <Route path='/firepage' element={<Firepage />} />
           <Route path="/myfiles" element={<MyFiles />} />
           <Route path="/verifydocs" element={<VerifyDocs />} />
           <Route path='/login' element={<Login />}/>
-          <Route path='/certificate' element={<Certificate />} />
+          <Route path='/certificate/:userAddress/:requestId/type/:docType' element={<Certificate />} />
           <Route path="/myorgs" element={<MyOrgs />} />
           <Route path='/requests' element={<Requests />} />1
           <Route path="/org/:orgAddress" element={<OrgPage/>} />
