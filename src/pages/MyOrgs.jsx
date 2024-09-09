@@ -1,10 +1,12 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PlusIcon } from 'lucide-react'
-import { requestToJoinOrgMethod, getUserNameMethod, getUserOrganizationsMethod, getOrgNameMethod } from "../contract/vault/methods"
+import { getUserNameMethod, getUserOrganizationsMethod, getOrgNameMethod } from "../contract/vault/methods"
+import { requestToJoinOrgSendMethod } from "../contract/vault/methods2"
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -18,10 +20,10 @@ import {
 import useWallet from '@/hooks/useWallet';
 
 export default function Component() {
-  const { address } = useWallet(); 
+  const { address, signer } = useWallet(); 
 
-  const [ orgAddress, setOrgAddress ] = useState('')
-  const [ message, setMessage ] = useState('')
+  const [ orgAddress, setOrgAddress ] = useState('0x260192b1B8b4ecDeF2EeC2C02Bd9Ae15011464a5')
+  const [ message, setMessage ] = useState('really want to join your team. sir 1 ')
 
   // const navigate = useNavigate();
 
@@ -36,15 +38,13 @@ export default function Component() {
     }
 
     if (address) {
-      // await requestToJoinOrgMethod(address, orgAddress, message)
-      toast.promise(
-          requestToJoinOrgMethod(address, orgAddress, message),
+      await toast.promise(
+          requestToJoinOrgSendMethod(signer, orgAddress, message),
           {
             pending: 'Requesting to join the organisation',
             success: 'Request Sent',
           }
       )
-      // toast.success("Successfully joined the organization!")
     } else {
       toast.error('Please enter a valid wallet address.');
     }
