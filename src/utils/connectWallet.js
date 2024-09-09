@@ -52,4 +52,4 @@ export const getBalance = async (account) => {
       } catch (err) {
         console.log(err);
       }
-  };
+};

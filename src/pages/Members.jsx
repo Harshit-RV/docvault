@@ -13,20 +13,22 @@ import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 export default function Members() {  
-  const { address } = useWallet();
+  // const { address } = useWallet();
   
   const fetchMembers = async () => {
-      const result = await getMembersMethod(address);
-      console.log('result', result);
-      return result;
+    const walletAddress = localStorage.getItem('walletAddress');
+    const result = await getMembersMethod(walletAddress);
+    console.log('result', result);
+    return result;
   }
 
-  const { data: members, isLoading: membersLoading, refetch: refetchMembers } = useQuery('orgmembers', fetchMembers);
+  const { data: members, isLoading: membersLoading, refetch: refetchMembers } = useQuery('orgmembers', fetchMembers, { enabled: false });
 
   const fetchRequests = async () => {
-      const result = await getJoinRequestsMethod(address);
-      console.log('requests:', result);
-      return result;
+    const walletAddress = localStorage.getItem('walletAddress');
+    const result = await getJoinRequestsMethod(walletAddress);
+    console.log('requests:', result);
+    return result;
   }
 
   const { data: requests, isLoading: requestsLoading, refetch: refetchRequests } = useQuery('requests', fetchRequests);
@@ -135,7 +137,7 @@ export default function Members() {
 }
 
 function JoinRequestElement(props) {
-  const { address, signer } = useWallet(); 
+  const { address, signer } = useWallet();
 
   const [ name, setName ] = useState('');
 

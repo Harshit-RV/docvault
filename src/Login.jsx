@@ -96,6 +96,7 @@ function UserForm({ navigate }) {
         )
 
         localStorage.setItem('role', 'user');
+        localStorage.setItem('walletAddress', account);
         navigate('/myfiles'); 
 
       } else {
@@ -106,6 +107,10 @@ function UserForm({ navigate }) {
           toast.error("User not registered. Please sign up.");
           return;
         }
+
+        localStorage.setItem('role', 'user');
+        localStorage.setItem('walletAddress', account);
+        navigate('/myfiles'); 
 
       }
     } catch (error) {
@@ -180,6 +185,7 @@ function OrganizationForm({ navigate }) {
         )
 
         localStorage.setItem('role', 'org');
+        localStorage.setItem('walletAddress', account);
         navigate('/members'); 
 
       } else {
@@ -190,6 +196,10 @@ function OrganizationForm({ navigate }) {
           toast.error("Organization not registered. Please sign up.");
           return;
         }
+
+        localStorage.setItem('role', 'org');
+        localStorage.setItem('walletAddress', account);
+        navigate('/members'); 
 
       }
     } catch (error) {

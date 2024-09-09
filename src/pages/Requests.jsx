@@ -12,10 +12,9 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Requests() {
 
-  const { address } = useWallet();
-
   const fetchNewDocRequests = async () => {
-    const result = await getNewDocumentRequestsMethod(address);
+    const walletAddress = localStorage.getItem('walletAddress');
+    const result = await getNewDocumentRequestsMethod(walletAddress);
     console.log('new doc requests:', result);
     return result;
   }
@@ -23,7 +22,8 @@ export default function Requests() {
   const { data: newDocRequests, isLoading: newDocLoading, refetch: refetchNewDoc } = useQuery('new-doc-requests', fetchNewDocRequests);
   
   const fetchVerificationRequests = async () => {
-    const result = await getVerificationRequestsMethod(address);
+    const walletAddress = localStorage.getItem('walletAddress');
+    const result = await getVerificationRequestsMethod(walletAddress);
     console.log('verification requests:', result);
     return result;
   }

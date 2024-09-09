@@ -20,10 +20,10 @@ import {
 import useWallet from '@/hooks/useWallet';
 
 export default function Component() {
-  const { address, signer } = useWallet(); 
+  const { signer } = useWallet(); 
 
-  const [ orgAddress, setOrgAddress ] = useState('0x260192b1B8b4ecDeF2EeC2C02Bd9Ae15011464a5')
-  const [ message, setMessage ] = useState('really want to join your team. sir 1 ')
+  const [ orgAddress, setOrgAddress ] = useState('')
+  const [ message, setMessage ] = useState('')
 
   // const navigate = useNavigate();
 
@@ -37,7 +37,7 @@ export default function Component() {
       return;
     }
 
-    if (address) {
+    if (signer) {
       await toast.promise(
           requestToJoinOrgSendMethod(signer, orgAddress, message),
           {
@@ -51,23 +51,23 @@ export default function Component() {
   };
 
   const fetchOrgs = async () => {
-    const result = await getUserOrganizationsMethod(address);
+    const walletAddress = localStorage.getItem('walletAddress');
+    const result = await getUserOrganizationsMethod(walletAddress);
     console.log('result: ', result);
     return result;
   }
 
   const { data: orgs, isLoading: orgsLoading } = useQuery('user-orgs2', fetchOrgs);
 
-  const getNameFromAddress = async () => {
-    const name = await getUserNameMethod(address, address);
-    console.log('name', name);
-    return name;
-  }
+  // const getNameFromAddress = async () => {
+  //   const name = await getUserNameMethod(address, address);
+  //   console.log('name', name);
+  //   return name;
+  // }
 
   return (
     <div className="min-h-screen w-full bg-gray-900 px-5 flex justify-center">
       <div className='flex flex-col gap-6 my-10 w-full max-w-[900px]'>
-        <p>{address}</p>
         <div className="flex justify-between items-center">
           <h1 className="text-white font-bold text-xl ml-1">My Organizations</h1>
 
@@ -111,8 +111,6 @@ export default function Component() {
           </Dialog>
         </div>
 
-        {/* <Button onClick={handleJoin}> handle join </Button> */}
-        {/* <p className='text-white'>{address}</p> */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {
             orgsLoading && (

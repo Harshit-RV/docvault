@@ -22,7 +22,6 @@ export async function getMembersMethod(address,) {
         return result;
     } catch(error) {
         console.error(" there was an error", error);
-        return [];
     }
 }
 
@@ -76,7 +75,7 @@ export async function getNewDocumentRequestsMethod(address) {
 
 export async function getUserOrganizationsMethod(address) {
     try {
-      const result = await contract.methods.getUserOrganizations().call({ from: address , gas : 4000000});
+      const result = await contract.methods.getUserOrganizations().call({ from: address , gas : 5000000});
         return result;
     
     } catch(error) {
