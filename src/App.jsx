@@ -12,6 +12,7 @@ import Copy from './copy';
 import Header from './pages/Header';
 import IpfsHash from './pages/ipfshash'
 import Firepage from './pages/Firepage';
+import PredictionForm from './pages/Prediction';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Routes>
           <Route path='/' element={<TestPage />} />
           <Route path='/firepage' element={<Firepage />} />
+          <Route path='prediction' element={<PredictionForm/>}/>
           <Route path="/myfiles" element={<MyFiles />} />
           <Route path="/verifydocs" element={<VerifyDocs />} />
           <Route path='/login' element={<Login />}/>

@@ -6,7 +6,7 @@ import sys
 import os
 
 # Set the path for pytesseract
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+# pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 def variance_of_laplacian(image):
     # Compute the Laplacian of the image and return the focus measure

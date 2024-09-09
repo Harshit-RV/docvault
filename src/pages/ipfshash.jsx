@@ -3,7 +3,6 @@ import { useState } from 'react'
 import axios from 'axios';
 
 function IpfsHash() {
-  const[file, setFile] = useState(null);
   const[fileUrl, setFileUrl] =useState("");
 
   const handleSubmit = async (e) => {
@@ -35,11 +34,7 @@ function IpfsHash() {
     <>
     <div className='p-20'>
       <h1>IPFS: Upload File</h1>
-      <form>
-        <input type="file" aria-label="uploaded" onChange= {(e)=>setFile(e.target.files[0])}/>
-        <button type= "submit" onClick={handleSubmit} > Upload</button>
-
-      </form>
+     
       {fileUrl && (
         <a href= {fileUrl} target ="blank" >Check the image here</a>
       )}

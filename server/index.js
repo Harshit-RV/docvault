@@ -7,6 +7,7 @@ import cors from 'cors';
 
 
 
+
 const app = express();
 const port = 5002;
 app.use(cors());
@@ -28,7 +29,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
     const filePath = path.join(__dirname, 'uploads', req.file.filename);
 
     // Run the Python script to check for blurriness
-    exec(`C:\\Python312\\python.exe detect_blur.py ${filePath}`, (error, stdout, stderr) => {
+    exec(`python3 detect_blur.py ${filePath}`, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error executing Python script: ${stderr}`);
             return res.status(500).send(`Error: ${stderr}`);
@@ -43,3 +44,4 @@ app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
 
+// C:\\Python312\\python.exe detect_blur.py
