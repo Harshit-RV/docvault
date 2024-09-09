@@ -28,7 +28,7 @@ function Login() {
       </div>
       
       <div className="md:w-1/2 flex justify-center items-center p-8 pt-2 ">
-        <Card className="w-full max-w-md bg-gray-800 text-white border-gray-700 h-[60vh]">
+        <Card className="w-full max-w-md bg-gray-800 text-white border-gray-700 h-min">
           <CardHeader>
             <CardTitle className="text-3xl pt-2 font-bold text-center">Welcome to docVault</CardTitle>
             <CardDescription className="text-gray-400 text-center">
