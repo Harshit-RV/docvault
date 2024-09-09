@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -72,7 +73,7 @@ function UserForm({ navigate }) {
   const handleConnect = async (isSignUp) => {
     setIsLoading(true);
     try {
-      const account = await connectWallet();
+      const { account, signer } = await connectWallet();
 
       if (!account) {
         toast.error("Failed to connect wallet. Please try again.");
@@ -86,8 +87,8 @@ function UserForm({ navigate }) {
           return;
         }
 
-        toast.promise(
-          registerUserSendMethod(account, name),
+        await toast.promise(
+          registerUserSendMethod(signer, name),
           {
             pending: 'Creating user..',
             success: 'User created successfully. Redirecting to dashboard..',
@@ -156,7 +157,7 @@ function OrganizationForm({ navigate }) {
   const handleConnect = async (isSignUp) => {
     setIsLoading(true);
     try {
-      const account = await connectWallet();
+      const { account, signer } = await connectWallet();
 
       if (!account) {
         toast.error("Failed to connect wallet. Please try again.");
@@ -170,8 +171,8 @@ function OrganizationForm({ navigate }) {
           return;
         }
 
-        toast.promise(
-          registerOrganizationSendMethod(account, name),
+        await toast.promise(
+          registerOrganizationSendMethod(signer, name),
           {
             pending: 'Creating organization..',
             success: 'Ogranization created successfully. Redirecting to dashboard..',

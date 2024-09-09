@@ -76,105 +76,106 @@ const CertificateForm = () => {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-gray-50 shadow-lg rounded-lg mt-10 flex flex-col">
-      {requestId}
-      {docType}
-      {userAddress}
-      {/* {!imageUrl && (
-        <>
-          <h1 className="text-3xl font-bold mb-8 text-center text-primaryGreen">Generate Certificate</h1>
-          <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Document Type */}
-            <div className="mb-8 w-[40vh]">
-              <label className="block text-gray-300 font-semibold">Document Type</label>
-              <select
-                name="documentType"
-                value={formData.documentType}
-                onChange={handleChange}
-                className="w-full border border-gray-600 p-2 mt-2 px-2 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-primaryGreen"
-              >
-                <option value="">Select Document</option>
-                <option value="bonafide">Bonafide Certificate</option>
-                <option value="merit-award">Merit Award Certificate</option>
-              </select>
-            </div>
+    <></>
+    // <div className="p-6 max-w-4xl mx-auto bg-gray-50 shadow-lg rounded-lg mt-10 flex flex-col">
+    //   {requestId}
+    //   {docType}
+    //   {userAddress}
+    //   {formData}
+    //     <>
+    //       {/* <h1 className="text-3xl font-bold mb-8 text-center text-primaryGreen">Generate Certificate</h1> */}
+    //       <form onSubmit={handleSubmit} className="space-y-8">
+    //         {/* Document Type 
+    //         <div className="mb-8 w-[40vh]">
+    //           <label className="block text-gray-300 font-semibold">Document Type</label>
+    //           <select
+    //             name="documentType"
+    //             value={formData.documentType}
+    //             onChange={handleChange}
+    //             className="w-full border border-gray-600 p-2 mt-2 px-2 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-primaryGreen"
+    //           >
+    //             <option value="">Select Document</option>
+    //             <option value="bonafide">Bonafide Certificate</option>
+    //             <option value="merit-award">Merit Award Certificate</option>
+    //           </select>
+    //         </div>
 
-            {/* Organization */}
-            <div className="mb-8">
-              <label className="block text-gray-300 font-semibold">Organization</label>
-              <select
-                name="organization"
-                value={formData.organization}
-                onChange={handleChange}
-                className="w-full border border-gray-600 p-2 mt-2 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-primaryGreen"
-              >
-                <option value="">Select Organization</option>
-                <option value="nsut">Netaji Subhas University of Technology</option>
-                <option value="iitd">Indian Institute of Technology Delhi</option>
-              </select>
-            </div>
+    //         {/* Organization */}
+    //         <div className="mb-8">
+    //           <label className="block text-gray-300 font-semibold">Organization</label>
+    //           <select
+    //             name="organization"
+    //             value={formData.organization}
+    //             onChange={handleChange}
+    //             className="w-full border border-gray-600 p-2 mt-2 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-primaryGreen"
+    //           >
+    //             <option value="">Select Organization</option>
+    //             <option value="nsut">Netaji Subhas University of Technology</option>
+    //             <option value="iitd">Indian Institute of Technology Delhi</option>
+    //           </select>
+    //         </div>
 
-            {/* Additional Form Fields */}
-            {Object.keys(formData).map((key) =>
-              key !== "documentType" && key !== "organization" ? (
-                <div key={key} className="mb-8">
-                  <label className="block text-gray-300 font-semibold">
-                    {key.replace(/([A-Z])/g, ' $1').toUpperCase()}
-                  </label>
-                  <input
-                    type="text"
-                    name={key}
-                    value={formData[key]}
-                    onChange={handleChange}
-                    className="w-full border border-gray-600 p-2 mt-2 px-2 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-primaryGreen"
-                  />
-                </div>
-              ) : null
-            )}
+    //         {/* Additional Form Fields */}
+    //         {Object.keys(formData).map((key) =>
+    //           key !== "documentType" && key !== "organization" ? (
+    //             <div key={key} className="mb-8">
+    //               <label className="block text-gray-300 font-semibold">
+    //                 {key.replace(/([A-Z])/g, ' $1').toUpperCase()}
+    //               </label>
+    //               <input
+    //                 type="text"
+    //                 name={key}
+    //                 value={formData[key]}
+    //                 onChange={handleChange}
+    //                 className="w-full border border-gray-600 p-2 mt-2 px-2 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-primaryGreen"
+    //               />
+    //             </div>
+    //           ) : null
+    //         )}
 
-            {/* Submit Button */}
-            <div className="flex justify-end">
-              <button
-                type="submit"
-                className="bg-primaryGreen text-black font-medium px-6 py-2 rounded hover:bg-green-700 transition-transform duration-300 transform hover:scale-105"
-              >
-                Generate Certificate
-              </button>
-            </div>
-          </form>
-        </>
-      )}
+    //         {/* Submit Button */}
+    //         <div className="flex justify-end">
+    //           <button
+    //             type="submit"
+    //             className="bg-primaryGreen text-black font-medium px-6 py-2 rounded hover:bg-green-700 transition-transform duration-300 transform hover:scale-105"
+    //           >
+    //             Generate Certificate
+    //           </button>
+    //         </div>
+    //       </form>
+    //     </>
+    //   )
 
 
-      {/* Display Generated Certificate */}
-      {imageUrl && (
-        <div className="mt-8 text-center">
-          <h2 className="text-2xl font-semibold mb-10 text-primaryGreen">Generated Certificate</h2>
-          <img src={imageUrl} alt="Generated Certificate" className="h-auto mx-auto rounded-lg shadow-lg" />
-          <a
-            href={downloadUrl}
-            download="certificate.png"
-            className="bg-primaryGreen text-black font-medium px-4 py-2 rounded inline-block mt-5 hover:bg-green-600 transition-transform duration-300 transform hover:scale-105"
-          >
-            Download Certificate
-          </a>
-          {fileUrl && (
-            <div className="mt-6">
-              <a
-                href={fileUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-blue-600 text-white px-4 py-2 rounded inline-block hover:bg-blue-700 transition-transform duration-300 transform hover:scale-105"
-              >
-                View on IPFS
-              </a>
-            </div>
-          )}
-        </div>
-      )} */}
+    //   {/* Display Generated Certificate */}
+    //   {imageUrl && (
+    //     <div className="mt-8 text-center">
+    //       <h2 className="text-2xl font-semibold mb-10 text-primaryGreen">Generated Certificate</h2>
+    //       <img src={imageUrl} alt="Generated Certificate" className="h-auto mx-auto rounded-lg shadow-lg" />
+    //       <a
+    //         href={downloadUrl}
+    //         download="certificate.png"
+    //         className="bg-primaryGreen text-black font-medium px-4 py-2 rounded inline-block mt-5 hover:bg-green-600 transition-transform duration-300 transform hover:scale-105"
+    //       >
+    //         Download Certificate
+    //       </a>
+    //       {fileUrl && (
+    //         <div className="mt-6">
+    //           <a
+    //             href={fileUrl}
+    //             target="_blank"
+    //             rel="noopener noreferrer"
+    //             className="bg-blue-600 text-white px-4 py-2 rounded inline-block hover:bg-blue-700 transition-transform duration-300 transform hover:scale-105"
+    //           >
+    //             View on IPFS
+    //           </a>
+    //         </div>
+    //       )}
+    //     </div>
+    //   )}
 
-      <Button onClick={() => pinJsonToIPFS(jsonData)}> json </Button>
-    </div>
+    //   <Button onClick={() => pinJsonToIPFS(jsonData)}> json </Button>
+    // </div>
   );
 };
 

@@ -19,7 +19,7 @@ import useWallet from '@/hooks/useWallet';
 import { v4 as uuidv4 } from 'uuid';
 
 function OrgPage() {
-  const { address } = useWallet(); 
+  const { address, signer } = useWallet(); 
 
   const [ activeTab, setActiveTab ] =  useState("tab1");
   const [ popup, setPopup ] = useState(false);
@@ -69,7 +69,7 @@ function OrgPage() {
   const onNewDocumentRequest = async () => {
     const uniqueId = uuidv4();
     await toast.promise(
-      addNewDocumentRequestSendMethod(address, orgAddress, uniqueId, title, description, '', documentType),
+      addNewDocumentRequestSendMethod(signer, orgAddress, uniqueId, title, description, '', documentType),
       {
         pending: 'Adding new document request..',
         success: 'Request added',

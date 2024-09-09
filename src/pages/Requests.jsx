@@ -119,7 +119,7 @@ function RequestCard2({ name, requester, address }) {
 }
 
 function RequestCard(props) {
-  const { address } = useWallet(); 
+  const { address, signer } = useWallet(); 
   const navigate = useNavigate();
 
   const [ name, setName ] = useState('');
@@ -136,7 +136,7 @@ function RequestCard(props) {
   const handleUpdate = async (update) => {
     if (props.newDoc) {
       if (update === 'REJECTED') {
-        await deleteVerificationRequestSendMethod(address, props.id);
+        await deleteVerificationRequestSendMethod(signer, props.id);
       } else {
         navigate(`/certificate/${props.publisher}/${props.id}/type/${props.docType}`);
       }

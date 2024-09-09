@@ -135,7 +135,7 @@ export default function Members() {
 }
 
 function JoinRequestElement(props) {
-  const { address } = useWallet(); 
+  const { address, signer } = useWallet(); 
 
   const [ name, setName ] = useState('');
 
@@ -152,7 +152,7 @@ function JoinRequestElement(props) {
     const { r, s, v, hashedMessage } = await signMessage();
     if (update === 'ACCEPTED') {
       await toast.promise(
-        updateJoinRequestSendMethod(address, props.address, 'ACCEPTED', hashedMessage, v, r, s),
+        updateJoinRequestSendMethod(signer, props.address, 'ACCEPTED', hashedMessage, v, r, s),
         {
           pending: 'Requesting to join the organisation',
           success: 'Request Sent',
@@ -160,7 +160,7 @@ function JoinRequestElement(props) {
       );
     } else if (update === 'REJECTED') {
       await toast.promise(
-        updateJoinRequestSendMethod(address, props.address, 'REJECTED', hashedMessage, v, r, s),
+        updateJoinRequestSendMethod(signer, props.address, 'REJECTED', hashedMessage, v, r, s),
         {
           pending: 'Requesting to join the organisation',
           success: 'Request Sent',
@@ -168,7 +168,7 @@ function JoinRequestElement(props) {
       );
     } else {
       await toast.promise(
-        updateJoinRequestSendMethod(address, props.address, 'BLOCKED', hashedMessage, v, r, s),
+        updateJoinRequestSendMethod(signer, props.address, 'BLOCKED', hashedMessage, v, r, s),
         {
           pending: 'Requesting to join the organisation',
           success: 'Request Sent',
