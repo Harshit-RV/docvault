@@ -125,7 +125,7 @@ function UserForm({ navigate }) {
       />
       <Button 
         onClick={() => handleConnect(true)}
-        className="w-full bg-gray-800 border border-white hover:bg-emerald-700 text-white"
+        className="w-full bg-gray-800 border border-primaryGreen hover:bg-emerald-700 text-primaryGreen"
         disabled={isLoading}
       >
         {isLoading ? 'Connecting...' : 'Connect and Sign Up'}

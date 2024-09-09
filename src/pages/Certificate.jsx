@@ -3,6 +3,8 @@ import axios from 'axios';
 
 const CertificateForm = () => {
   const [formData, setFormData] = useState({
+    documentType: '',
+    organization: '',
     institutionName: '',
     dateOfIssue: '',
     certificateNumber: '',
@@ -34,11 +36,10 @@ const CertificateForm = () => {
       const url = URL.createObjectURL(response.data);
       setImageUrl(url);
       setDownloadUrl(url);
-      console.log(url)
 
       // Step 2: Upload the certificate to IPFS using Pinata
       const fileData = new FormData();
-      fileData.append('file', response.data); // Append the blob generated to the form data
+      fileData.append('file', response.data);
 
       const responseData = await axios({
         method: 'post',
@@ -50,7 +51,7 @@ const CertificateForm = () => {
       });
 
       const fileUrl = 'https://gateway.pinata.cloud/ipfs/' + responseData.data.IpfsHash;
-      setFileUrl(fileUrl); // Set the IPFS file URL
+      setFileUrl(fileUrl);
 
     } catch (error) {
       console.error('Error generating or uploading certificate:', error);
@@ -58,48 +59,93 @@ const CertificateForm = () => {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto bg-gray-50 shadow-lg rounded-lg mt-10">
+    <div className="p-8 max-w-4xl mx-auto bg-primaryBlack text-white shadow-xl rounded-2xl mt-10 font-inter">
       {!imageUrl && (
         <>
-          <h1 className="text-2xl font-bold mb-6 text-center">Generate Certificate</h1>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {Object.keys(formData).map((key) => (
-              <div key={key} className="flex items-center mb-4">
-                <label className="w-1/3 font-semibold text-right pr-4">{key.replace(/([A-Z])/g, ' $1').toUpperCase()}:</label>
-                <input
-                  type="text"
-                  name={key}
-                  value={formData[key]}
-                  onChange={handleChange}
-                  className="flex-1 p-2 border border-gray-300 rounded-lg"
-                  required
-                />
-              </div>
-            ))}
-            <button
-              type="submit"
-              className="bg-primaryBlack text-white p-2 rounded-lg w-full hover:bg-blue-600 transition"
-            >
-              Generate
-            </button>
+          <h1 className="text-3xl font-bold mb-8 text-center text-primaryGreen">Generate Certificate</h1>
+          <form onSubmit={handleSubmit} className="space-y-8">
+            {/* Document Type */}
+            <div className="mb-8 w-[40vh]">
+              <label className="block text-gray-300 font-semibold">Document Type</label>
+              <select
+                name="documentType"
+                value={formData.documentType}
+                onChange={handleChange}
+                className="w-full border border-gray-600 p-2 mt-2 px-2 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-primaryGreen"
+              >
+                <option value="">Select Document</option>
+                <option value="bonafide">Bonafide Certificate</option>
+                <option value="merit-award">Merit Award Certificate</option>
+              </select>
+            </div>
+
+            {/* Organization */}
+            <div className="mb-8">
+              <label className="block text-gray-300 font-semibold">Organization</label>
+              <select
+                name="organization"
+                value={formData.organization}
+                onChange={handleChange}
+                className="w-full border border-gray-600 p-2 mt-2 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-primaryGreen"
+              >
+                <option value="">Select Organization</option>
+                <option value="nsut">Netaji Subhas University of Technology</option>
+                <option value="iitd">Indian Institute of Technology Delhi</option>
+              </select>
+            </div>
+
+            {/* Additional Form Fields */}
+            {Object.keys(formData).map((key) =>
+              key !== "documentType" && key !== "organization" ? (
+                <div key={key} className="mb-8">
+                  <label className="block text-gray-300 font-semibold">
+                    {key.replace(/([A-Z])/g, ' $1').toUpperCase()}
+                  </label>
+                  <input
+                    type="text"
+                    name={key}
+                    value={formData[key]}
+                    onChange={handleChange}
+                    className="w-full border border-gray-600 p-2 mt-2 px-2 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-primaryGreen"
+                  />
+                </div>
+              ) : null
+            )}
+
+            {/* Submit Button */}
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                className="bg-primaryGreen text-black font-medium px-6 py-2 rounded hover:bg-green-700 transition-transform duration-300 transform hover:scale-105"
+              >
+                Generate Certificate
+              </button>
+            </div>
           </form>
         </>
       )}
+
+      {/* Display Generated Certificate */}
       {imageUrl && (
-        <div className="mt-6 text-center h-full">
-          <h2 className="text-xl font-semibold mb-10">Generated Certificate</h2>
-          <img src={imageUrl} alt="Generated Certificate" className="h-auto" />
+        <div className="mt-8 text-center">
+          <h2 className="text-2xl font-semibold mb-10 text-primaryGreen">Generated Certificate</h2>
+          <img src={imageUrl} alt="Generated Certificate" className="h-auto mx-auto rounded-lg shadow-lg" />
           <a
             href={downloadUrl}
             download="certificate.png"
-            className="bg-green-700 text-white p-2 rounded-lg inline-block hover:bg-green-800 mt-5 transition"
+            className="bg-primaryGreen text-black font-medium px-4 py-2 rounded inline-block mt-5 hover:bg-green-600 transition-transform duration-300 transform hover:scale-105"
           >
             Download Certificate
           </a>
           {fileUrl && (
             <div className="mt-6">
-              <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="bg-blue-600 text-white p-2 rounded-lg inline-block hover:bg-blue-700">
-                Check the IPFS URL
+              <a
+                href={fileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-blue-600 text-white px-4 py-2 rounded inline-block hover:bg-blue-700 transition-transform duration-300 transform hover:scale-105"
+              >
+                View on IPFS
               </a>
             </div>
           )}
@@ -110,4 +156,6 @@ const CertificateForm = () => {
 };
 
 export default CertificateForm;
+
+
 

@@ -6,13 +6,15 @@ import { FileIcon, MoreVertical, UserIcon, UserPlusIcon, PlusIcon } from 'lucide
 import { Button } from "@/components/ui/button";
 import axios from 'axios';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog"; // Assuming these components exist
+import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/ui/dialog"; // Assuming these components exist
 
 function MyFiles() {
   const [activeTab, setActiveTab] = useState("tab1");
   const [popup, setPopup] = useState(false);
   const [popupTab, setPopupTab] = useState("requestNewFile");
   const [selectedFile, setSelectedFile] = useState(null);
+  const [predictionResult, setPredictionResult] = useState(null);
+
   const [files, setFiles] = useState([
     { id: 1, name: 'Example File.pdf', type: 'PDF', size: '2.5 MB' },
     { id: 2, name: 'Document.docx', type: 'DOCX', size: '1.8 MB' },
@@ -69,7 +71,25 @@ const handleFileChange = async (event) => {
           } else {
               toast.error('Unexpected response from the server.');
           }
-      } }catch (error) {
+      }
+
+      const predictionResponse = await axios.post('http://127.0.0.1:5000/predict', formData);
+        if (predictionResponse.data.prediction) {
+          const prediction = predictionResponse.data.prediction;
+          if (prediction === 1) {
+            setPredictionResult("Document passed edge detection test.");
+            toast.success("Document passed edge detection test.");
+          } else {
+            setPredictionResult("Document did not pass edge detection test.");
+            toast.error("Document did not pass edge detection test.");
+          }
+        } else {
+          toast.error('Unexpected response from the prediction server.');
+        }
+
+      }
+      
+      catch (error) {
           toast.error('Error uploading the image.');
           console.error('Error:', error.response ? error.response.data : error.message); // Log detailed error
       }
@@ -95,6 +115,7 @@ const handleFileChange = async (event) => {
 
     {popup && (
       <Dialog open={popup} onOpenChange={setPopup}>
+        <DialogTitle></DialogTitle>
         <DialogContent className="bg-gray-900 border-none text-white py-7 px-8 max-w-[52vh] overflow-auto">
           <div className="flex mb-8 gap-2 h-80">
             <Tabs defaultValue={popupTab}>
@@ -138,7 +159,7 @@ const handleFileChange = async (event) => {
                 <form>
                   <div className="mb-4  w-[40vh]">
                     <label className="block text-gray-300 font-semibold">Upload File</label>
-                    <FileUpload onChange={handleFileChange} />
+                    <FileUpload type="file" onChange={handleFileChange} />
                   </div>
 
                   <div className="flex justify-end">

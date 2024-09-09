@@ -13,6 +13,7 @@ import Copy from './copy';
 // import UploadImage from './pages/UploadImage'
 import Header from './pages/Header';
 import IpfsHash from './pages/ipfshash'
+import PredictionForm from './pages/Prediction';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
 
         <Routes>
           <Route path='/' element={<TestPage />} />
+          <Route path='prediction' element={<PredictionForm/>}/>
           <Route path="/myfiles" element={<MyFiles />} />
           <Route path="/verifydocs" element={<VerifyDocs />} />
           <Route path='/login' element={<Login />}/>
@@ -31,21 +33,7 @@ function App() {
           <Route path="/org/:orgAddress" element={<OrgPage/>} />
           <Route path='/members' element={<Members />} />
           <Route path='/copy' element={<Copy/>}/>
-<<<<<<< HEAD
-          {/* <Route path="/uploadImage" element={<UploadImage/>}/> */}
-          {/* />
-        
-          {/* <Route path='/login' element={<Login />} />
-          <Route path='/signup' element={<Signup />} />
-          <Route path='/workflow' element={<WorkFlow />} />
-          <Route path='/auction' element={<Auction />} />
-          <Route path="/payments" element={<Payments />} />
-          <Route path="/approvals" element={<Approvals />} />
-          } */}
-=======
-          <Route path="/uploadImage" element={<UploadImage/>}/>
           <Route path='/ipfshash' element={<IpfsHash/>}/>
->>>>>>> b6697161593063f885d5a8351c7fa7e20fd66a33
         </Routes>
     </BrowserRouter>
     </div>
