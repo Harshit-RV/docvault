@@ -1,10 +1,12 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PlusIcon } from 'lucide-react'
-import { requestToJoinOrgMethod, getUserNameMethod, getUserOrganizationsMethod, getOrgNameMethod } from "../contract/vault/methods"
+import { getUserNameMethod, getUserOrganizationsMethod, getOrgNameMethod } from "../contract/vault/methods"
+import { requestToJoinOrgSendMethod } from "../contract/vault/methods2"
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -18,7 +20,7 @@ import {
 import useWallet from '@/hooks/useWallet';
 
 export default function Component() {
-  const { address } = useWallet(); 
+  const { signer } = useWallet(); 
 
   const [ orgAddress, setOrgAddress ] = useState('')
   const [ message, setMessage ] = useState('')
@@ -35,38 +37,37 @@ export default function Component() {
       return;
     }
 
-    if (address) {
-      // await requestToJoinOrgMethod(address, orgAddress, message)
-      toast.promise(
-          requestToJoinOrgMethod(address, orgAddress, message),
+    if (signer) {
+      await toast.promise(
+          requestToJoinOrgSendMethod(signer, orgAddress, message),
           {
             pending: 'Requesting to join the organisation',
             success: 'Request Sent',
           }
       )
-      // toast.success("Successfully joined the organization!")
     } else {
       toast.error('Please enter a valid wallet address.');
     }
   };
 
   const fetchOrgs = async () => {
-    const result = await getUserOrganizationsMethod(address);
-    console.log('result', result);
+    const walletAddress = localStorage.getItem('walletAddress');
+    const result = await getUserOrganizationsMethod(walletAddress);
+    console.log('result: ', result);
     return result;
   }
 
-  const { data: orgs, isLoading: orgsLoading, refetch: refetchOrgs } = useQuery('user-orgs2', fetchOrgs);
+  const { data: orgs, isLoading: orgsLoading } = useQuery('user-orgs2', fetchOrgs);
 
-  const getNameFromAddress = async () => {
-    const name = await getUserNameMethod(address, address);
-    console.log('name', name);
-    return name;
-  }
+  // const getNameFromAddress = async () => {
+  //   const name = await getUserNameMethod(address, address);
+  //   console.log('name', name);
+  //   return name;
+  // }
 
   return (
     <div className="min-h-screen w-full bg-gray-900 px-5 flex justify-center">
-      <div className='flex flex-col gap-3 my-10 w-full max-w-[900px]'>
+      <div className='flex flex-col gap-6 my-10 w-full max-w-[900px]'>
         <div className="flex justify-between items-center">
           <h1 className="text-white font-bold text-xl ml-1">My Organizations</h1>
 
@@ -110,37 +111,30 @@ export default function Component() {
           </Dialog>
         </div>
 
-        {/* <Button onClick={handleJoin}> handle join </Button> */}
-        <p className='text-white'>{address}</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {
-            // orgsLoading && (
-            //   // <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
-            //   //   <span className='font-bold text-2xl'>Loading...</span>
-            //   // </div>
-            // ) 
+            orgsLoading && (
+              <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
+                <span className='font-bold text-2xl'>Loading...</span>
+              </div>
+            ) 
           }
           {
-            // orgsLoading || orgs === undefined 
-            // ? <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
-            //     <span className='font-bold text-2xl'>Loading...</span>
-            //   </div>
-            // : orgs.length === 0
-            //   ? (
-            //     <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
-            //       <span className='font-bold text-2xl'>No organisations joined</span>
-            //     </div>
-            //   ): (
-            //     orgs.map((org, index) => (
-            //       <OrgElement key={index} orgAddress={org} />
-            //     ))
-            //   )
+            orgsLoading || orgs === undefined 
+            ? <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
+                <span className='font-bold text-2xl'>Loading...</span>
+              </div>
+            : orgs.length === 0
+              ? (
+                <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
+                  <span className='font-bold text-2xl'>No organisations joined</span>
+                </div>
+              ): (
+                orgs.map((org, index) => (
+                  <OrgElement key={index} orgAddress={org} />
+                ))
+              )
           }
-          
-          <OrgElement orgAddress={'0x885690e5893bE8Be6EdE0A0339Cb89138a485AeC'} />
-          <OrgElement orgAddress={'0x885690e5893bE8Be6EdE0A0339Cb89138a485AeC'} />
-          <OrgElement orgAddress={'0x885690e5893bE8Be6EdE0A0339Cb89138a485AeC'} />
-          <OrgElement orgAddress={'0x885690e5893bE8Be6EdE0A0339Cb89138a485AeC'} />
         </div>
       </div>
       <ToastContainer />
@@ -170,7 +164,7 @@ const OrgElement = ({ orgAddress }) => {
     >
       <CardContent className="pt-6">
         <h2 className="text-[2.5vh] font-semibold text-gray-200 mb-4">{name}</h2>
-        <p className="text-md text-gray-500">({String(orgAddress).slice(0, 10)}...)</p>
+        <p className="text-md text-gray-500">({String(orgAddress).slice(0, 20)}...)</p>
       </CardContent>
       <CardFooter className="flex justify-between">
       </CardFooter>

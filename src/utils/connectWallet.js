@@ -1,18 +1,26 @@
 import Web3 from 'web3';
 import { connectToGanache, connectToSepolia }  from './walletAdapter'
+import { ethers } from 'ethers';
 
-export const connectWallet = async (role) => {
+export const connectWallet = async () => {
   try {
-    await connectToSepolia();
+    await connectToGanache();
     const currentProvider = detectCurrentProvider();
     if (currentProvider) {
       await currentProvider.request({ method: 'eth_requestAccounts' });
+
       const web3 = new Web3(currentProvider);
       const userAccount = await web3.eth.getAccounts();
+
       const account = userAccount[0];
-      localStorage.setItem('walletAddress', account); // Store wallet address in local storage
-      console.log(`Connected wallet: ${account}, Role: ${role}`);
-      return account;
+
+      localStorage.setItem('walletAddress', account);
+      console.log(`Connected wallet: ${account}`);
+
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+
+      return { account, signer };
     }
   } catch (err) {
     console.log(err);
@@ -34,7 +42,7 @@ const detectCurrentProvider = () => {
 
 export const getBalance = async (account) => {
     try {
-        await connectToSepolia();
+        await connectToGanache();
         const currentProvider = detectCurrentProvider();
         if (currentProvider) {
           const web3 = new Web3(currentProvider);
@@ -44,4 +52,4 @@ export const getBalance = async (account) => {
       } catch (err) {
         console.log(err);
       }
-  };
+};

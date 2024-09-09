@@ -5,29 +5,41 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { CheckIcon, XIcon, UserIcon, UserPlusIcon } from 'lucide-react'
 import { useQuery } from 'react-query'
 import useWallet from '@/hooks/useWallet';
-import { getMembersMethod, getJoinRequestsMethod, getUserNameMethod, updateJoinRequestMethod } from '@/contract/vault/methods'
+import { getMembersMethod, getJoinRequestsMethod, getUserNameMethod } from '@/contract/vault/methods'
+import { getMembersSendFormalMethod} from '@/contract/vault/methods2'
+import { updateJoinRequestSendMethod } from '@/contract/vault/methods2'
 import { useEffect, useState } from 'react'
 import { signMessage } from '@/utils/signMessage';
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 export default function Members() {  
-  const { address } = useWallet();
+  // const { address } = useWallet();
   
   const fetchMembers = async () => {
-      const result = await getMembersMethod(address);
-      console.log('result', result);
-      return result;
+    const walletAddress = localStorage.getItem('walletAddress');
+    const result = await getMembersMethod(walletAddress);
+    console.log('result', result);
+    return result;
   }
 
-  const { data: members, isLoading: membersLoading, refetch: refetchMembers } = useQuery('orgmembers', fetchMembers);
+  const { data: members, isLoading: membersLoading, refetch: refetchMembers } = useQuery('orgmembers', fetchMembers, { enabled: false });
 
   const fetchRequests = async () => {
-      const result = await getJoinRequestsMethod(address);
-      console.log('requests:', result);
-      return result;
+    const walletAddress = localStorage.getItem('walletAddress');
+    const result = await getJoinRequestsMethod(walletAddress);
+    console.log('requests:', result);
+    return result;
   }
 
-  const { data: requests, isLoading: requestsLoading, refetch: refetchRequests } = useQuery('requests', fetchRequests);
+  const { data: requests, isLoading: requestsLoading, refetch: refetchRequests } = useQuery('requests', fetchRequests , {
+    enabled: false
+  });
 
+  useEffect(() => {
+    refetchMembers();
+    refetchRequests();
+  },[]);
 
   return (
     <div className="bg-gray-900 min-h-screen min-w-full flex flex-col">
@@ -73,6 +85,14 @@ export default function Members() {
                     </div>
                   ) 
                 }
+                {/* {
+                  membersList.map((member, index) => (
+                    <MemberElement 
+                      key={index}
+                      address={member}
+                    /> 
+                  ))
+                } */}
                 {
                   membersLoading || members === undefined 
                   ? null
@@ -132,7 +152,7 @@ export default function Members() {
 }
 
 function JoinRequestElement(props) {
-  const { address } = useWallet(); 
+  const { address, signer } = useWallet();
 
   const [ name, setName ] = useState('');
 
@@ -147,13 +167,13 @@ function JoinRequestElement(props) {
 
   const handleUpdate = async (update) => {
     const { r, s, v, hashedMessage } = await signMessage();
-    if (update === 'ACCEPTED') {
-      await updateJoinRequestMethod(address, props.address, 'ACCEPTED', hashedMessage, v, r, s);
-    } else if (update === 'REJECTED') {
-      await updateJoinRequestMethod(address, props.address, 'REJECTED', hashedMessage, v, r, s);
-    } else {
-      await updateJoinRequestMethod(address, props.address, 'BLOCKED', hashedMessage, v, r, s);
-    }
+    await toast.promise(
+      updateJoinRequestSendMethod(signer, props.address, update, hashedMessage, v, r, s),
+      {
+        pending: 'Processing...',
+        success: `User ${String(update).toLowerCase()}`,
+      }
+    );
     props.refetchMembers();
     props.refetchRequests();
   }

@@ -13,12 +13,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { addNewDocumentRequestMethod, getOrgNameMethod } from "@/contract/vault/methods";
+import { getOrgNameMethod } from "@/contract/vault/methods";
+import { addNewDocumentRequestSendMethod } from "@/contract/vault/methods2";
 import useWallet from '@/hooks/useWallet';
 import { v4 as uuidv4 } from 'uuid';
 
 function OrgPage() {
-  const { address } = useWallet(); 
+  const { address, signer } = useWallet(); 
 
   const [ activeTab, setActiveTab ] =  useState("tab1");
   const [ popup, setPopup ] = useState(false);
@@ -67,7 +68,13 @@ function OrgPage() {
 
   const onNewDocumentRequest = async () => {
     const uniqueId = uuidv4();
-    await addNewDocumentRequestMethod(address, orgAddress, uniqueId, title, description, '', documentType);
+    await toast.promise(
+      addNewDocumentRequestSendMethod(signer, orgAddress, uniqueId, title, description, '', documentType),
+      {
+        pending: 'Adding new document request..',
+        success: 'Request added',
+      }
+    )
   }
 
   const handleFileChange = (event) => {
