@@ -18,13 +18,15 @@ function MyFiles() {
   const [popupTab, setPopupTab] = useState("requestNewFile");
   const [selectedFile, setSelectedFile] = useState(null);
   const [predictionResult, setPredictionResult] = useState(null);
+  const [success, setSuccess] = useState("")
 
-  const [files, setFiles] = useState([
-    { id: 1, name: 'Example File.pdf', type: 'PDF', size: '2.5 MB' },
-    { id: 2, name: 'Document.docx', type: 'DOCX', size: '1.8 MB' },
-    { id: 3, name: 'Image.jpg', type: 'JPG', size: '3.2 MB' },
-    { id: 4, name: 'Spreadsheet.xlsx', type: 'XLSX', size: '1.1 MB' },
-    { id: 5, name: 'Presentation.pptx', type: 'PPTX', size: '4.7 MB' },
+
+  const [ files, setFiles ] = useState([
+    { id: 1, name: 'Example File.pdf', type: 'PDF', size: '2.5 MB', url:'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+    { id: 2, name: 'Document.docx', type: 'DOCX', size: '1.8 MB',  url:'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg'},
+    { id: 3, name: 'Image.jpg', type: 'JPG', size: '3.2 MB',  url:'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+    { id: 4, name: 'Spreadsheet.xlsx', type: 'XLSX', size: '1.1 MB',  url:'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+    { id: 5, name: 'Presentation.pptx', type: 'PPTX', size: '4.7 MB',  url:'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg'},
   ]);
 
   const handlePopup = () => {
@@ -41,67 +43,68 @@ function MyFiles() {
 
     setSelectedFile(file);
 
-    if (file) {
-        const validTypes = ["image/png", "image/jpeg", "image/jpg"];
-        if (!validTypes.includes(file.type)) {
-            toast.error("Invalid file type. Only PNG, JPG, and JPEG are allowed.");
-            return;
-        }
+  if (file) {
+      const validTypes = ["image/png", "image/jpeg", "image/jpg", "image/pdf"];
+      if (!validTypes.includes(file.type)) {
+          toast.error("Invalid file type. Only PNG, JPG, JPEG are allowed.");
+          return;
+      }
 
-        const maxSizeInBytes = 50 * 1024;
-        if (file.size > maxSizeInBytes) {
-            toast.error("File size exceeds 50KB.");
-            return;
-        }
+      const maxSizeInBytes = 50 * 1024;
+      if (file.size > maxSizeInBytes) {
+          toast.error("File size less than 50KB.");
+          return;
+      }
 
         const formData = new FormData();
         formData.append('image', file);
 
-        try {
-            console.log("Uploading file..."); // Add this line to log the upload attempt
-            const response = await axios.post('http://localhost:5002/upload', formData);
+      try {
+          console.log("Uploading file..."); // Add this line to log the upload attempt
+          const response = await axios.post('http://localhost:5002/upload', formData);
+          const predictionResponse = await axios.post('http://127.0.0.1:5000/predict', formData);
 
-            // Check if 'error' is in the response
-            if (response.data.error) {
-                toast.error(`Backend Error: ${response.data.error}`);
-            } else if (response.data.result) {
-                // Safely check and use result
-                const result = response.data.result;
-                if (typeof result === 'string' && result.includes('blurry')) {
-                    toast.error('The image is blurry.');
-                } else if(typeof result === 'string' && result.includes('rejected')){
-                    toast.error('The image did not pass OCR test');
-                }
-                else if (typeof result === 'string' && result.includes('clear')) {
-                    toast.success('The image is clear and passes OCR test');
-            } else {
-                toast.error('Unexpected response from the server.');
-            }
-        }
 
-        const predictionResponse = await axios.post('http://127.0.0.1:5000/predict', formData);
-          if (predictionResponse.data.prediction) {
-            const prediction = predictionResponse.data.prediction;
-            if (prediction === 1) {
-              setPredictionResult("Document passed edge detection test.");
-              toast.success("Document passed edge detection test.");
-            } else {
-              setPredictionResult("Document did not pass edge detection test.");
-              toast.error("Document did not pass edge detection test.");
-            }
+          // Check if 'error' is in the response
+          if (response.data.error) {
+              toast.error(`Backend Error: ${response.data.error}`);
+          } 
+          
+          else if (response.data.result) {
+              // Safely check and use result
+              const result = response.data.result;
+              if (typeof result === 'string' && result.includes('blurry')) {
+                  toast.error('The image is blurry.');
+              } else if(typeof result === 'string' && result.includes('rejected')){
+                  toast.error('The image did not passes OCR test');
+              }
+              
+      else if (predictionResponse.data.prediction) {
+          const prediction = predictionResponse.data.prediction;
+          if (prediction === 1) {
+            setPredictionResult("Document passed edge detection test.");
+            setSuccess("true")
+            toast.success("Document passed all tests.");
           } else {
-            toast.error('Unexpected response from the prediction server.');
+            setPredictionResult("Document did not pass edge detection test.");
+            toast.error("Document did not pass edge detection test.");
           }
-
         }
-        
-        catch (error) {
-            toast.error('Error uploading the image.');
-            console.error('Error:', error.response ? error.response.data : error.message); // Log detailed error
+       } else {
+          toast.error('Unexpected response from the prediction server.');
         }
 
-        console.log("File is valid", file);
+      }
+    
+      catch (error) {
+          toast.error('Error uploading the image.');
+          setSuccess("false")
+          console.error('Error:', error.response ? error.response.data : error.message); // Log detailed error
+      }
+
+      console.log("File is valid", file);
     }
+  
   };
 
   const fetchFiles = async () => {
@@ -193,7 +196,13 @@ function MyFiles() {
               <TabsContent value="requestVerification">
                 <form>
                   <div className="mb-4  w-[40vh]">
+                    <div className="flex justify-between justify-content items-center">
                     <label className="block text-gray-300 font-semibold">Upload File</label>
+                    {
+                      success=="true"?
+                      <div className="text-green-600">File Uploaded</div>: success==="false"?
+                       <div className=" text-red-600"> File Not Uploaded</div>: <div></div>
+                                          }</div>
                     <FileUpload type="file" onChange={handleFileChange} />
                   </div>
 
@@ -236,15 +245,17 @@ function FileCard({ file, deleteFile }) {
 
   return (
     <div className="relative bg-[#1C1F2E] p-4 rounded-lg text-white">
-      <div className="flex justify-between items-start mb-12">
-        <FileIcon className="w-12 h-12 text-[#27E8A7]" />
-        <MoreVertical className="w-5 h-5 cursor-pointer" onClick={toggleOptions} />
-      </div>
-      <h3 className="font-semibold mb-1 truncate">{file.name}</h3>
-      <p className="text-sm text-gray-400">{file.type} • {file.size}</p>
+
+    <img src={file.url} className="rounded mb-2" />
+
+    <div className="flex justify-between items-start ">
+    <h3 className="font-semibold  truncate">{file.name}</h3>
+      <MoreVertical className="w-5 h-5 cursor-pointer" onClick={toggleOptions} />
+    </div>
+      
 
       {showOptions && (
-        <div className="absolute right-4 top-12 bg-gray-800 text-white rounded-md shadow-lg">
+        <div className="absolute right-4 top-18 z-30 bg-gray-800 text-white rounded-md shadow-lg">
           <button
             className="block px-4 py-2 text-left w-full hover:bg-red-600 hover:rounded-md"
             onClick={() => {setDeletePopup(true),setShowOptions(false)}} 
