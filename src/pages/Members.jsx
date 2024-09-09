@@ -150,31 +150,13 @@ function JoinRequestElement(props) {
 
   const handleUpdate = async (update) => {
     const { r, s, v, hashedMessage } = await signMessage();
-    if (update === 'ACCEPTED') {
-      await toast.promise(
-        updateJoinRequestSendMethod(signer, props.address, 'ACCEPTED', hashedMessage, v, r, s),
-        {
-          pending: 'Requesting to join the organisation',
-          success: 'Request Sent',
-        }
-      );
-    } else if (update === 'REJECTED') {
-      await toast.promise(
-        updateJoinRequestSendMethod(signer, props.address, 'REJECTED', hashedMessage, v, r, s),
-        {
-          pending: 'Requesting to join the organisation',
-          success: 'Request Sent',
-        }
-      );
-    } else {
-      await toast.promise(
-        updateJoinRequestSendMethod(signer, props.address, 'BLOCKED', hashedMessage, v, r, s),
-        {
-          pending: 'Requesting to join the organisation',
-          success: 'Request Sent',
-        }
-      );
-    }
+    await toast.promise(
+      updateJoinRequestSendMethod(signer, props.address, update, hashedMessage, v, r, s),
+      {
+        pending: 'Processing...',
+        success: `User ${String(update).toLowerCase()}`,
+      }
+    );
     props.refetchMembers();
     props.refetchRequests();
   }
