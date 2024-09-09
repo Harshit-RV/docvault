@@ -17,12 +17,12 @@ function MyFiles() {
   const [success, setSuccess] = useState("")
 
 
-  const [files, setFiles] = useState([
-    { id: 1, name: 'Example File.pdf', type: 'PDF', size: '2.5 MB' },
-    { id: 2, name: 'Document.docx', type: 'DOCX', size: '1.8 MB' },
-    { id: 3, name: 'Image.jpg', type: 'JPG', size: '3.2 MB' },
-    { id: 4, name: 'Spreadsheet.xlsx', type: 'XLSX', size: '1.1 MB' },
-    { id: 5, name: 'Presentation.pptx', type: 'PPTX', size: '4.7 MB' },
+  const [ files, setFiles ] = useState([
+    { id: 1, name: 'Example File.pdf', type: 'PDF', size: '2.5 MB', url:'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+    { id: 2, name: 'Document.docx', type: 'DOCX', size: '1.8 MB',  url:'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg'},
+    { id: 3, name: 'Image.jpg', type: 'JPG', size: '3.2 MB',  url:'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+    { id: 4, name: 'Spreadsheet.xlsx', type: 'XLSX', size: '1.1 MB',  url:'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
+    { id: 5, name: 'Presentation.pptx', type: 'PPTX', size: '4.7 MB',  url:'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg'},
   ]);
 
   const handlePopup = () => {
@@ -210,15 +210,17 @@ function FileCard({ file, deleteFile }) {
 
   return (
     <div className="relative bg-[#1C1F2E] p-4 rounded-lg text-white">
-      <div className="flex justify-between items-start mb-12">
-        <FileIcon className="w-12 h-12 text-[#27E8A7]" />
-        <MoreVertical className="w-5 h-5 cursor-pointer" onClick={toggleOptions} />
-      </div>
-      <h3 className="font-semibold mb-1 truncate">{file.name}</h3>
-      <p className="text-sm text-gray-400">{file.type} • {file.size}</p>
+
+    <img src={file.url} className="rounded mb-2" />
+
+    <div className="flex justify-between items-start ">
+    <h3 className="font-semibold  truncate">{file.name}</h3>
+      <MoreVertical className="w-5 h-5 cursor-pointer" onClick={toggleOptions} />
+    </div>
+      
 
       {showOptions && (
-        <div className="absolute right-4 top-12 bg-gray-800 text-white rounded-md shadow-lg">
+        <div className="absolute right-4 top-18 z-30 bg-gray-800 text-white rounded-md shadow-lg">
           <button
             className="block px-4 py-2 text-left w-full hover:bg-red-600 hover:rounded-md"
             onClick={() => {setDeletePopup(true),setShowOptions(false)}} 
