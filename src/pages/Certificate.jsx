@@ -141,9 +141,8 @@ const CertificateForm = () => {
                 Generate Certificate
               </button>
             </div>
-          </form>
-        </>
-      )}
+          {/* </form> */}
+        {/* </> */}
 
 
       {/* Display Generated Certificate */}
