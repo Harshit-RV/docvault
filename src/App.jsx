@@ -13,19 +13,22 @@ import Copy from './copy';
 import UploadImage from './pages/UploadImage'
 import Header from './pages/Header';
 import IpfsHash from './pages/ipfshash'
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
     <div className='flex flex-col'>
       <BrowserRouter>
+        <ToastContainer />
         <Header/>
 
         <Routes>
           <Route path='/' element={<TestPage />} />
+          <Route path='/firepage' element={<Firepage />} />
           <Route path="/myfiles" element={<MyFiles />} />
           <Route path="/verifydocs" element={<VerifyDocs />} />
           <Route path='/login' element={<Login />}/>
-          <Route path='/certificate' element={<Certificate />} />
+          <Route path='/certificate/:userAddress/:requestId/type/:docType' element={<Certificate />} />
           <Route path="/myorgs" element={<MyOrgs />} />
           <Route path='/requests' element={<Requests />} />
           <Route path="/org/:orgAddress" element={<OrgPage/>} />

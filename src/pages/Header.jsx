@@ -11,19 +11,25 @@ function Header() {
   const [userRole, setUserRole] = useState(localStorage.getItem('role'));
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   useEffect(() => {
-    console.log('updating');
+    console.log('Updating user role from localStorage');
     const role = localStorage.getItem('role');
     setUserRole(role);
-  });
+  }, []); // Add empty dependency array to run only once on component mount
 
   const handleMenuClose = () => {
     setIsClosing(true);
     setTimeout(() => {
       setToggleMenu(false);
       setIsClosing(false);
-    }, 300);
+    }, 300); // Delay matches animation duration
+  };
+
+  const handleLogout = () => {
+    // Add any required logic for logout, such as clearing localStorage
+    localStorage.removeItem('role'); // Example: removing user role on logout
+    navigate('/login');
   };
 
   const isActive = (path) => (location.pathname === path ? 'active' : '');
@@ -54,6 +60,7 @@ function Header() {
 
   return (
     <div className="h-16 w-full bg-gray-800 flex justify-between items-center md:px-12 py-6 text-white">
+      {/* Brand Name */}
       <div className="hover:cursor-pointer text-[10px] md:text-[20px] text-primaryGreen font-semibold">docVault</div>
 
       {/* Desktop Menu */}
@@ -62,8 +69,8 @@ function Header() {
       </div>
 
       {/* Logout Button */}
-      <div className="hover:cursor-pointer hidden md:block font-medium">
-        <div onClick={() => navigate('/login')}><FaSignOutAlt /></div>
+      <div className="hover:cursor-pointer hidden md:block font-medium" onClick={handleLogout}>
+        <FaSignOutAlt />
       </div>
 
       {/* Mobile Menu Button */}
@@ -73,7 +80,7 @@ function Header() {
         ) : (
           <div className={`fixed right-0 top-1.5 p-3 h-auto shadow-2xl px-4 flex flex-col items-center rounded-3xl bg-gray-300 text-black ${isClosing ? 'animate-slide-out' : 'animate-slide-in'}`}>
             {renderMenuItems()}
-            <div onClick={() => handleMenuClose()} className="flex justify-center px-4 py-1.5 bg-black text-white rounded cursor-pointer">
+            <div onClick={handleMenuClose} className="flex justify-center px-4 py-1.5 bg-black text-white rounded cursor-pointer">
               <AiOutlineCloseCircle fontSize={24} />
             </div>
           </div>
@@ -84,4 +91,3 @@ function Header() {
 }
 
 export default Header;
-
