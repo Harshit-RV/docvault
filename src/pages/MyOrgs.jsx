@@ -67,6 +67,7 @@ export default function Component() {
   return (
     <div className="min-h-screen w-full bg-gray-900 px-5 flex justify-center">
       <div className='flex flex-col gap-6 my-10 w-full max-w-[900px]'>
+        <p>{address}</p>
         <div className="flex justify-between items-center">
           <h1 className="text-white font-bold text-xl ml-1">My Organizations</h1>
 
