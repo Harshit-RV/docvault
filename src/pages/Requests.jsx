@@ -1,21 +1,21 @@
+/* eslint-disable react/prop-types */
 import { User, Check, X , WalletMinimal} from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useQuery } from 'react-query'
-import { getUserNameMethod, getNewDocumentRequestsMethod, deleteNewDocumentRequestMethod, deleteVerificationRequestMethod } from '@/contract/vault/methods'
+import { getUserNameMethod, getNewDocumentRequestsMethod } from '@/contract/vault/methods'
+import {  deleteVerificationRequestSendMethod } from '@/contract/vault/methods2'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import useWallet from '@/hooks/useWallet';
 import { CheckIcon, XIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { signMessage } from '@/utils/signMessage';
 import { useNavigate } from 'react-router-dom';
 
 export default function Requests() {
 
-  const { address } = useWallet(); 
+  const { address } = useWallet();
 
   const fetchNewDocRequests = async () => {
-    const address2 = '0x885690e5893bE8Be6EdE0A0339Cb89138a485AeC';
-    const result = await getNewDocumentRequestsMethod(address2);
+    const result = await getNewDocumentRequestsMethod(address);
     console.log('new doc requests:', result);
     return result;
   }
@@ -136,7 +136,7 @@ function RequestCard(props) {
   const handleUpdate = async (update) => {
     if (props.newDoc) {
       if (update === 'REJECTED') {
-        await deleteVerificationRequestMethod(address, props.id);
+        await deleteVerificationRequestSendMethod(address, props.id);
       } else {
         navigate(`/certificate/${props.publisher}/${props.id}/type/${props.docType}`);
       }

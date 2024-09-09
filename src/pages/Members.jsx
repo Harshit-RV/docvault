@@ -5,9 +5,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { CheckIcon, XIcon, UserIcon, UserPlusIcon } from 'lucide-react'
 import { useQuery } from 'react-query'
 import useWallet from '@/hooks/useWallet';
-import { getMembersMethod, getJoinRequestsMethod, getUserNameMethod, updateJoinRequestMethod } from '@/contract/vault/methods'
+import { getMembersMethod, getJoinRequestsMethod, getUserNameMethod } from '@/contract/vault/methods'
+import { updateJoinRequestSendMethod } from '@/contract/vault/methods2'
 import { useEffect, useState } from 'react'
 import { signMessage } from '@/utils/signMessage';
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 export default function Members() {  
   const { address } = useWallet();
@@ -148,11 +151,29 @@ function JoinRequestElement(props) {
   const handleUpdate = async (update) => {
     const { r, s, v, hashedMessage } = await signMessage();
     if (update === 'ACCEPTED') {
-      await updateJoinRequestMethod(address, props.address, 'ACCEPTED', hashedMessage, v, r, s);
+      await toast.promise(
+        updateJoinRequestSendMethod(address, props.address, 'ACCEPTED', hashedMessage, v, r, s),
+        {
+          pending: 'Requesting to join the organisation',
+          success: 'Request Sent',
+        }
+      );
     } else if (update === 'REJECTED') {
-      await updateJoinRequestMethod(address, props.address, 'REJECTED', hashedMessage, v, r, s);
+      await toast.promise(
+        updateJoinRequestSendMethod(address, props.address, 'REJECTED', hashedMessage, v, r, s),
+        {
+          pending: 'Requesting to join the organisation',
+          success: 'Request Sent',
+        }
+      );
     } else {
-      await updateJoinRequestMethod(address, props.address, 'BLOCKED', hashedMessage, v, r, s);
+      await toast.promise(
+        updateJoinRequestSendMethod(address, props.address, 'BLOCKED', hashedMessage, v, r, s),
+        {
+          pending: 'Requesting to join the organisation',
+          success: 'Request Sent',
+        }
+      );
     }
     props.refetchMembers();
     props.refetchRequests();
