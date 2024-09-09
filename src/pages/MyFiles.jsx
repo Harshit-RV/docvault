@@ -4,6 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FileIcon, MoreVertical, UserIcon, UserPlusIcon, PlusIcon } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import axios from 'axios';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog"; // Assuming these components exist
 
@@ -11,6 +12,7 @@ function MyFiles() {
   const [activeTab, setActiveTab] = useState("tab1");
   const [popup, setPopup] = useState(false);
   const [popupTab, setPopupTab] = useState("requestNewFile");
+  const [selectedFile, setSelectedFile] = useState(null);
   const [files, setFiles] = useState([
     { id: 1, name: 'Example File.pdf', type: 'PDF', size: '2.5 MB' },
     { id: 2, name: 'Document.docx', type: 'DOCX', size: '1.8 MB' },
@@ -22,23 +24,61 @@ function MyFiles() {
   const handlePopup = () => {
     setPopup(!popup);
   };
+  const handleTabChange =(tabName)=>{
+    setActiveTab(tabName);
+}
+const handleFileChange = async (event) => {
+  const file = event.target.files[0];
+  console.log("Selected file:", file); // Add this line to log the selected file
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
+  setSelectedFile(file);
+
+  if (file) {
       const validTypes = ["image/png", "image/jpeg", "image/jpg"];
       if (!validTypes.includes(file.type)) {
-        toast.error("Invalid file type. Only PNG, JPG, and JPEG are allowed.");
-        return;
+          toast.error("Invalid file type. Only PNG, JPG, and JPEG are allowed.");
+          return;
       }
-      const maxSizeInBytes = 50 * 1024; 
+
+      const maxSizeInBytes = 50 * 1024;
       if (file.size > maxSizeInBytes) {
-        toast.error("File size exceeds 50KB.");
-        return;
+          toast.error("File size exceeds 50KB.");
+          return;
       }
+
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+          console.log("Uploading file..."); // Add this line to log the upload attempt
+          const response = await axios.post('http://localhost:5002/upload', formData);
+
+          // Check if 'error' is in the response
+          if (response.data.error) {
+              toast.error(`Backend Error: ${response.data.error}`);
+          } else if (response.data.result) {
+              // Safely check and use result
+              const result = response.data.result;
+              if (typeof result === 'string' && result.includes('blurry')) {
+                  toast.error('The image is blurry.');
+              } else if(typeof result === 'string' && result.includes('rejected')){
+                  toast.error('The image did not passes OCR test');
+              }
+              else if (typeof result === 'string' && result.includes('clear')) {
+                  toast.success('The image is clear and passed OCR test');
+          } else {
+              toast.error('Unexpected response from the server.');
+          }
+      } }catch (error) {
+          toast.error('Error uploading the image.');
+          console.error('Error:', error.response ? error.response.data : error.message); // Log detailed error
+      }
+
       console.log("File is valid", file);
-    }
-  };
+  }
+};
+
+
 
   return (
     <div className="bg-[#0D111D] h-screen px-12">

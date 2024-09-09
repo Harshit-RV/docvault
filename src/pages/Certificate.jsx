@@ -33,6 +33,7 @@ const CertificateForm = () => {
 
   const [imageUrl, setImageUrl] = useState('');
   const [downloadUrl, setDownloadUrl] = useState('');
+  const [fileUrl, setFileUrl] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -42,15 +43,34 @@ const CertificateForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Step 1: Generate the certificate
       const response = await axios.post('http://localhost:5001/generate-certificate', formData, {
         responseType: 'blob',
       });
 
       const url = URL.createObjectURL(response.data);
       setImageUrl(url);
-      setDownloadUrl(url); // Set the URL for download
+      setDownloadUrl(url);
+      console.log(url)
+
+      // Step 2: Upload the certificate to IPFS using Pinata
+      const fileData = new FormData();
+      fileData.append('file', response.data); // Append the blob generated to the form data
+
+      const responseData = await axios({
+        method: 'post',
+        url: 'https://api.pinata.cloud/pinning/pinFileToIPFS',
+        data: fileData,
+        headers: {
+          Authorization: `Bearer ${import.meta.env.VITE_PINATA_JWT}`,
+        },
+      });
+
+      const fileUrl = 'https://gateway.pinata.cloud/ipfs/' + responseData.data.IpfsHash;
+      setFileUrl(fileUrl); // Set the IPFS file URL
+
     } catch (error) {
-      console.error('Error generating certificate:', error);
+      console.error('Error generating or uploading certificate:', error);
     }
   };
 
@@ -62,10 +82,9 @@ const CertificateForm = () => {
       {/* {!imageUrl && (
         <>
           <h1 className="text-2xl font-bold mb-6 text-center">Generate Certificate</h1>
-          
           <form onSubmit={handleSubmit} className="space-y-4">
             {Object.keys(formData).map((key) => (
-              <div key={key} className="flex items-center mb-4 text-sm">
+              <div key={key} className="flex items-center mb-4">
                 <label className="w-1/3 font-semibold text-right pr-4">{key.replace(/([A-Z])/g, ' $1').toUpperCase()}:</label>
                 <input
                   type="text"
@@ -98,6 +117,13 @@ const CertificateForm = () => {
           >
             Download Certificate
           </a>
+          {fileUrl && (
+            <div className="mt-6">
+              <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="bg-blue-600 text-white p-2 rounded-lg inline-block hover:bg-blue-700">
+                Check the IPFS URL
+              </a>
+            </div>
+          )}
         </div>
       )} */}
 

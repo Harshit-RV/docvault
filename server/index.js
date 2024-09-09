@@ -28,13 +28,14 @@ app.post('/upload', upload.single('image'), (req, res) => {
     const filePath = path.join(__dirname, 'uploads', req.file.filename);
 
     // Run the Python script to check for blurriness
-    exec(`python3 detect_blur.py ${filePath}`, (error, stdout, stderr) => {
+    exec(`C:\\Python312\\python.exe detect_blur.py ${filePath}`, (error, stdout, stderr) => {
         if (error) {
             console.error(`Error executing Python script: ${stderr}`);
             return res.status(500).send(`Error: ${stderr}`);
         }
+        const result = stdout.trim();
         console.log(`Python script output: ${stdout}`);
-        res.send(stdout);
+        res.json({ result });
     });
 });
 

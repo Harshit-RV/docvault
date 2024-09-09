@@ -3,25 +3,32 @@ from PIL import Image
 import numpy as np
 import cv2
 import sys
+import os
+
+# Set the path for pytesseract
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 def variance_of_laplacian(image):
-    # Compute the Laplacian of the image and then return the focus measure
+    # Compute the Laplacian of the image and return the focus measure
     return cv2.Laplacian(image, cv2.CV_64F).var()
 
 def is_blurry(image_path, threshold=10.0):
     # Load the image from the path
     image = cv2.imread(image_path)
     if image is None:
-        raise ValueError("Image could not be loaded. Check the path.")
-    
+        return "Error: Image could not be loaded. Check the path."
+
     # Convert the image to grayscale
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    
+
     # Calculate the focus measure
     fm = variance_of_laplacian(gray)
-    
+
     # Return whether the image is blurry or not
-    return fm < threshold
+    if fm < threshold:
+        return "The image is blurry."
+    else:
+        return "The image is clear."
 
 def preprocess_image(image):
     # Convert image to NumPy array
@@ -42,8 +49,11 @@ def preprocess_image(image):
     return gray_image, thresh_image, blurred_image
 
 def extract_text(image_path):
-    # Open image using PIL
-    image = Image.open(image_path)
+    try:
+        # Open image using PIL
+        image = Image.open(image_path)
+    except Exception as e:
+        return "Error: Unable to open image. " + str(e), None, None, None
     
     # Preprocess image
     gray_image, thresh_image, blurred_image = preprocess_image(image)
@@ -63,24 +73,20 @@ def document_type(words, doc_type):
 
     # Convert the list of words to a set for efficient lookup
     words_set = set(word.lower() for word in words)  # Convert to lower case to handle case insensitivity
-    # print("Words_set", words_set)
 
     if doc_type in keywords:
         required_keywords = set(keyword.lower() for keyword in keywords[doc_type])  # Convert to lower case
-        # print(required_keywords)
 
-        
         # Check if all required keywords are present in the words set
         missing_keywords = required_keywords - words_set
 
-        if len(missing_keywords)==0:
-            return True
+        if len(missing_keywords) == 0:
+            return "Document passed OCR test"
         else:
-            # print(f"Missing keywords: {missing_keywords}")
-            return False
+            return "Document rejected in OCR test. Missing keywords: " + ', '.join(missing_keywords)
     else:
-        print("Document type not recognized.")
-        return False
+        return "Error: Document type not recognized."
+
 def text_to_word_array(text):
     # Remove unwanted characters and extra whitespace
     cleaned_text = text.replace('\n', ' ').replace(':', ' ').strip()
@@ -90,7 +96,6 @@ def text_to_word_array(text):
 
     return words
 
-
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: python script.py <image_path>")
@@ -98,23 +103,25 @@ if __name__ == "__main__":
 
     image_path = sys.argv[1]
     try:
-        blurry = is_blurry(image_path)
-        if blurry:
-            print("The uploaded image is blurry.")
+        # Check if the image is blurry
+        blur_result = is_blurry(image_path)
+        
+        if blur_result == "The image is blurry.":
+            print(blur_result)
+            sys.exit(0)  # Exit if the image is blurry
+        
+        print(blur_result)
+        
+        # Extract text and process image
+        gray_image, thresh_image, blurred_image, text = extract_text(image_path)
+        
+        if text is None:
+            print(gray_image)  # Display error message if image extraction failed
         else:
-            print("The uploaded image is not blurry.")
-            
-            # Extract text and process image
-            gray_image, thresh_image, blurred_image, text = extract_text(image_path)
-            # print(text)
-
             words = text_to_word_array(text)
+            document_result = document_type(words, "bonafide")
+            print(f"Blurriness Status: {blur_result}")
+            print(f"OCR Test Result: {document_result}")
 
-            if document_type(words, "bonafide"):
-                print("Document passed ocr test")
-            else:
-                print('Document rejected in ocr test')
-
-            
-    except ValueError as e:
-        print(e)
+    except Exception as e:
+        print("Unexpected error:", str(e))

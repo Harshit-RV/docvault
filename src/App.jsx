@@ -10,7 +10,6 @@ import OrgPage from './pages/OrgPage';
 import Firepage from './pages/Firepage';
 import Members from './pages/Members';
 import Copy from './copy';
-import UploadImage from './pages/UploadImage'
 import Header from './pages/Header';
 import IpfsHash from './pages/ipfshash'
 import { ToastContainer } from 'react-toastify';
@@ -30,11 +29,10 @@ function App() {
           <Route path='/login' element={<Login />}/>
           <Route path='/certificate/:userAddress/:requestId/type/:docType' element={<Certificate />} />
           <Route path="/myorgs" element={<MyOrgs />} />
-          <Route path='/requests' element={<Requests />} />
+          <Route path='/requests' element={<Requests />} />1
           <Route path="/org/:orgAddress" element={<OrgPage/>} />
           <Route path='/members' element={<Members />} />
           <Route path='/copy' element={<Copy/>}/>
-          <Route path="/uploadImage" element={<UploadImage/>}/>
           <Route path='/ipfshash' element={<IpfsHash/>}/>
         </Routes>
     </BrowserRouter>
