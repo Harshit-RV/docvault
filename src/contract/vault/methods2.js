@@ -96,3 +96,16 @@ export const requestToJoinOrgSendMethod = async (signer, orgAddress, description
       console.error("requestToJoinOrgSendMethod failed:", error);
     }
 };
+
+export async function getMembersSendFormalMethod() {
+  try {
+    const provider = new ethers.BrowserProvider(window.ethereum);
+  const newContract = new ethers.Contract(contractAddress, abi, provider);
+  
+  const result = await newContract.getMembers();
+  console.log("getMembersSendFormalMethod successful. Result:", result);
+      return result;
+  } catch(error) {
+      console.error(" there was an error", error);
+  }
+}

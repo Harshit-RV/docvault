@@ -22,7 +22,6 @@ export async function getMembersMethod(address,) {
         return result;
     } catch(error) {
         console.error(" there was an error", error);
-        return [];
     }
 }
 

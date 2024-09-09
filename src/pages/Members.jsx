@@ -6,6 +6,7 @@ import { CheckIcon, XIcon, UserIcon, UserPlusIcon } from 'lucide-react'
 import { useQuery } from 'react-query'
 import useWallet from '@/hooks/useWallet';
 import { getMembersMethod, getJoinRequestsMethod, getUserNameMethod } from '@/contract/vault/methods'
+import { getMembersSendFormalMethod} from '@/contract/vault/methods2'
 import { updateJoinRequestSendMethod } from '@/contract/vault/methods2'
 import { useEffect, useState } from 'react'
 import { signMessage } from '@/utils/signMessage';
@@ -13,15 +14,31 @@ import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 export default function Members() {  
-  const { address } = useWallet();
+  const { address, signer } = useWallet();
+  // const [membersList,setMembersList] = useState([]);
   
   const fetchMembers = async () => {
-      const result = await getMembersMethod(address);
-      console.log('result', result);
+      const result = await getMembersSendFormalMethod(signer);
+      // addMemberIfNotExists(address);
+      // setMembersList(result);
+      console.log('result of members', result);
       return result;
   }
 
-  const { data: members, isLoading: membersLoading, refetch: refetchMembers } = useQuery('orgmembers', fetchMembers);
+  const { data: members, isLoading: membersLoading, refetch: refetchMembers } = useQuery('orgmembers', fetchMembers, {
+    enabled: false
+  });
+  // const addMemberIfNotExists = (newAddress) => {
+  //   const isAlreadyMember = membersList.includes(newAddress);
+    
+  //   if (!isAlreadyMember) {
+  //     setMembersList([...membersList, newAddress]);
+  //     console.log('Address added:', newAddress);
+  //   } else {
+  //     console.log('Address already exists in the members list:', newAddress);
+  //   }
+  // }
+
 
   const fetchRequests = async () => {
       const result = await getJoinRequestsMethod(address);
@@ -29,8 +46,14 @@ export default function Members() {
       return result;
   }
 
-  const { data: requests, isLoading: requestsLoading, refetch: refetchRequests } = useQuery('requests', fetchRequests);
+  const { data: requests, isLoading: requestsLoading, refetch: refetchRequests } = useQuery('requests', fetchRequests , {
+    enabled: false
+  });
 
+  useEffect(() => {
+    refetchMembers();
+    refetchRequests();
+  },[]);
 
   return (
     <div className="bg-gray-900 min-h-screen min-w-full flex flex-col">
@@ -76,6 +99,14 @@ export default function Members() {
                     </div>
                   ) 
                 }
+                {/* {
+                  membersList.map((member, index) => (
+                    <MemberElement 
+                      key={index}
+                      address={member}
+                    /> 
+                  ))
+                } */}
                 {
                   membersLoading || members === undefined 
                   ? null

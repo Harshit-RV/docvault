@@ -190,7 +190,9 @@ function OrganizationForm({ navigate }) {
           toast.error("Organization not registered. Please sign up.");
           return;
         }
-
+        
+        localStorage.setItem('role', 'org');
+        navigate('/members'); 
       }
     } catch (error) {
       console.error("Error:", error);

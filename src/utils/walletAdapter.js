@@ -7,7 +7,7 @@ const ganacheNetwork = {
     symbol: 'ETH',
     decimals: 18,
   },
-  rpcUrls: ['http://127.0.0.1:8545'],
+  rpcUrls: ['https://9c9f1t91-8545.inc1.devtunnels.ms'],
   blockExplorerUrls: [],
 };
 
