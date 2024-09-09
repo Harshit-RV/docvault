@@ -96,7 +96,7 @@ function UserForm({ navigate }) {
         await registerUserMethod(account, name);
         localStorage.setItem('role', 'user');
         toast.success("Successfully signed up as a user!");
-        navigate('/user-dashboard'); // Navigate to user's dashboard
+        navigate('/myfiles'); // Navigate to user's dashboard
       } else {
         const userName = await getUserNameMethod(account, account);
         if (userName == null) {
@@ -104,7 +104,7 @@ function UserForm({ navigate }) {
           return;
         }
         toast.success("Successfully signed in as a user!");
-        navigate('/user-dashboard'); // Navigate to user's dashboard
+        navigate('/myfiles');
       }
     } catch (error) {
       console.error("Error:", error);
@@ -169,7 +169,7 @@ function OrganizationForm({ navigate }) {
         await registerOrganisationMethod(account, name);
         localStorage.setItem('role', 'org');
         toast.success("Successfully signed up as an organization!");
-        navigate('/org-dashboard'); // Navigate to organization's dashboard
+        navigate('/members'); 
       } else {
         const orgName = await getOrgNameMethod(account, account);
         if (orgName == null) {
