@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { connectWallet } from '@/utils/connectWallet';
-import { registerUserMethod, getUserNameMethod, getOrgNameMethod, registerOrganisationMethod } from '@/contract/vault/methods';
+import { getUserNameMethod, getOrgNameMethod } from '@/contract/vault/methods';
+import { registerUserSendMethod, registerOrganizationSendMethod } from '@/contract/vault/methods2';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -72,28 +73,39 @@ function UserForm({ navigate }) {
     setIsLoading(true);
     try {
       const account = await connectWallet();
+
       if (!account) {
         toast.error("Failed to connect wallet. Please try again.");
         return;
       }
       
       if (isSignUp) {
-        if (!name) {
-          toast.error("Please enter a name.");
+
+        if (!name || name == "") {
+          toast.error("Please enter your name.");
           return;
         }
-        await registerUserMethod(account, name);
+
+        toast.promise(
+          registerUserSendMethod(account, name),
+          {
+            pending: 'Creating user..',
+            success: 'User created successfully. Redirecting to dashboard..',
+          }
+        )
+
         localStorage.setItem('role', 'user');
-        toast.success("Successfully signed up as a user!");
-        navigate('/myfiles'); // Navigate to user's dashboard
+        navigate('/myfiles'); 
+
       } else {
+
         const userName = await getUserNameMethod(account, account);
+
         if (userName == null) {
           toast.error("User not registered. Please sign up.");
           return;
         }
-        toast.success("Successfully signed in as a user!");
-        navigate('/myfiles');
+
       }
     } catch (error) {
       console.error("Error:", error);
@@ -145,28 +157,39 @@ function OrganizationForm({ navigate }) {
     setIsLoading(true);
     try {
       const account = await connectWallet();
+
       if (!account) {
         toast.error("Failed to connect wallet. Please try again.");
         return;
       }
       
       if (isSignUp) {
-        if (!name) {
-          toast.error("Please enter an organization name.");
+
+        if (!name || name == "") {
+          toast.error("Please enter your organization's name.");
           return;
         }
-        await registerOrganisationMethod(account, name);
+
+        toast.promise(
+          registerOrganizationSendMethod(account, name),
+          {
+            pending: 'Creating organization..',
+            success: 'Ogranization created successfully. Redirecting to dashboard..',
+          }
+        )
+
         localStorage.setItem('role', 'org');
-        toast.success("Successfully signed up as an organization!");
         navigate('/members'); 
+
       } else {
+
         const orgName = await getOrgNameMethod(account, account);
+
         if (orgName == null) {
           toast.error("Organization not registered. Please sign up.");
           return;
         }
-        toast.success("Successfully signed in as an organization!");
-        navigate('/org-dashboard'); // Navigate to organization's dashboard
+
       }
     } catch (error) {
       console.error("Error:", error);
@@ -209,9 +232,6 @@ function OrganizationForm({ navigate }) {
       >
         {isLoading ? 'Connecting...' : 'Connect and Sign In'}
       </Button>
-
-     
-
      
     </div>
   );
