@@ -6,6 +6,7 @@ import { CheckIcon, XIcon, UserIcon, UserPlusIcon } from 'lucide-react'
 import { useQuery } from 'react-query'
 import useWallet from '@/hooks/useWallet';
 import { getMembersMethod, getJoinRequestsMethod, getUserNameMethod } from '@/contract/vault/methods'
+import { getMembersSendFormalMethod} from '@/contract/vault/methods2'
 import { updateJoinRequestSendMethod } from '@/contract/vault/methods2'
 import { useEffect, useState } from 'react'
 import { signMessage } from '@/utils/signMessage';
@@ -31,8 +32,14 @@ export default function Members() {
     return result;
   }
 
-  const { data: requests, isLoading: requestsLoading, refetch: refetchRequests } = useQuery('requests', fetchRequests);
+  const { data: requests, isLoading: requestsLoading, refetch: refetchRequests } = useQuery('requests', fetchRequests , {
+    enabled: false
+  });
 
+  useEffect(() => {
+    refetchMembers();
+    refetchRequests();
+  },[]);
 
   return (
     <div className="bg-gray-900 min-h-screen min-w-full flex flex-col">
@@ -78,6 +85,14 @@ export default function Members() {
                     </div>
                   ) 
                 }
+                {/* {
+                  membersList.map((member, index) => (
+                    <MemberElement 
+                      key={index}
+                      address={member}
+                    /> 
+                  ))
+                } */}
                 {
                   membersLoading || members === undefined 
                   ? null

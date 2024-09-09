@@ -42,36 +42,70 @@ const CertificateForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const fetchMetadataFromIPFS = async (ipfsHash) => {
     try {
-      // Step 1: Generate the certificate
-      const response = await axios.post('http://localhost:5001/generate-certificate', formData, {
-        responseType: 'blob',
-      });
-
-      const url = URL.createObjectURL(response.data);
-      setImageUrl(url);
-      setDownloadUrl(url);
-
-      // Step 2: Upload the certificate to IPFS using Pinata
-      const fileData = new FormData();
-      fileData.append('file', response.data);
-
-      const responseData = await axios({
-        method: 'post',
-        url: 'https://api.pinata.cloud/pinning/pinFileToIPFS',
-        data: fileData,
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_PINATA_JWT}`,
-        },
-      });
-
-      const fileUrl = 'https://gateway.pinata.cloud/ipfs/' + responseData.data.IpfsHash;
-      setFileUrl(fileUrl);
-
+      const metadataUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
+      console.log('Fetching metadata from IPFS:', metadataUrl);
+  
+      // Fetch the metadata JSON directly and parse it
+      const response = await fetch(metadataUrl);
+      
+      // Check if the response is okay, then parse it as JSON
+      if (!response.ok) {
+        throw new Error('Failed to fetch metadata');
+      }
+  
+      const metadata = await response.json();  // This is the parsed JSON
+      return metadata;  // Return the parsed JSON metadata
     } catch (error) {
-      console.error('Error generating or uploading certificate:', error);
+      console.error('Error fetching metadata from IPFS:', error);
+      return null;
+    }
+  };
+
+  const generateImageUsingMetadata = (metadata) => {
+    const imageUrl = metadata.image; 
+    return imageUrl;
+  };
+
+  const handleGenerateAndUpload = async () => {
+    try {
+      // Fetch metadata from IPFS
+      const ipfs = await pinJsonToIPFS(jsonData);
+      console.log('IPFS Hash:', ipfs);
+      const metadata = await fetchMetadataFromIPFS(ipfs); 
+      console.log('Metadata:', metadata);
+      // Replace with your actual IPFS hash
+
+      if (metadata) {
+        // Generate the image using the metadata
+        const generatedImageUrl = generateImageUsingMetadata(metadata);
+        setImageUrl(generatedImageUrl);
+        console.log('Generated Image URL:', generatedImageUrl);
+
+        // Download the image blob
+        const imageBlob = await axios.get(generatedImageUrl, { responseType: 'blob' });
+
+        // Upload the generated image to IPFS
+        const fileData = new FormData();
+        fileData.append('file', imageBlob.data, 'generatedImage.png');
+
+        const responseData = await axios({
+          method: 'post',
+          url: 'https://api.pinata.cloud/pinning/pinFileToIPFS',
+          data: fileData,
+          headers: {
+            Authorization: `Bearer ${import.meta.env.VITE_PINATA_JWT}`,
+          },
+        });
+
+        const imageIpfsUrl = 'https://gateway.pinata.cloud/ipfs/' + responseData.data.IpfsHash;
+        setFileUrl(imageIpfsUrl);
+        // console.log('Image uploaded to IPFS:', imageIpfsUrl);
+        console.log('Image uploaded to IPFS:', imageIpfsUrl);
+      }
+    } catch (error) {
+      console.error('Error generating or uploading image:', error);
     }
   };
 
@@ -169,7 +203,7 @@ const CertificateForm = () => {
         </div>
       )}
 
-      <Button onClick={() => pinJsonToIPFS(jsonData)}> json </Button>
+      <Button onClick={handleGenerateAndUpload}> json </Button>
     </div>
   );
 };
