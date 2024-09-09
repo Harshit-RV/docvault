@@ -114,6 +114,7 @@ if __name__ == "__main__":
         
         # Extract text and process image
         gray_image, thresh_image, blurred_image, text = extract_text(image_path)
+        print(text)
         
         if text is None:
             print(gray_image)  # Display error message if image extraction failed

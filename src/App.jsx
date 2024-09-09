@@ -27,8 +27,17 @@ function App() {
           <Route path="/myfiles" element={<MyFiles />} />
           <Route path="/verifydocs" element={<VerifyDocs />} />
           <Route path='/login' element={<Login />}/>
+<<<<<<< HEAD
           <Route path='/certificate/:userAddress/:requestId/type/:docType' element={<Certificate />} />
           {/* <Route path='/certificate' element={<Certificate />} /> */}
+=======
+<<<<<<< HEAD
+          <Route path='/certificate/' element={<Certificate />} />
+=======
+          {/* <Route path='/certificate/:userAddress/:requestId/type/:docType' element={<Certificate />} /> */}
+          <Route path='/certificate' element={<Certificate />} />
+>>>>>>> b277cd1a9f7e10208780dcadbbcf5622db13ca67
+>>>>>>> 687ec4f1cfc4d9ac33d3d8e1a48f6ae35591beef
           <Route path="/myorgs" element={<MyOrgs />} />
           <Route path='/requests' element={<Requests />} />1
           <Route path="/org/:orgAddress" element={<OrgPage/>} />
