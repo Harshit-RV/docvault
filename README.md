@@ -19,7 +19,6 @@ This README provides an overview of the project, including team details, relevan
 
 ## Project Links
 
-- **Internal Presentation:** [Internal Presentation](files/Internal_PPT_ChangeMakers.pdf)
-- **Final SIH Presentation:** [Final SIH Presentation](files/SIH_PPT_ChangeMakers.pdf)
+- **Final SIH Presentation:** [Final SIH Presentation](files/SIH2024_PPT_ChangeMakers.pdf)
 - **Video Demonstration:** [Watch Video](https://youtu.be/Mrm3AJ6qZ24)
 - **Source Code:** [GitHub Repository](https://github.com/Aakash-Gen/SIH_INTERNAL_ROUND_1_CHANGEMAKERS)
