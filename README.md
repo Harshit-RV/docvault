@@ -19,8 +19,6 @@ This README provides an overview of the project, including team details, relevan
 
 ## Project Links
 
-- **Internal Presentation:** [Internal Presentation](files/Internal_PPT_ChangeMakers.pdf)
-- **Internal Presentation:** [Internal Presentation](files/SIH2024_PPT_TEAM-ChaneMakers.pdf)
-- **Presentation:** [Final SIH Presentation](files/SIH2024_PPT _TEAM-ChangeMakers.pdf)
+- **Presentation:** [Internal Presentation](files/SIH2024_PPT_TEAM-ChaneMakers.pdf)
 - **Video Demonstration:** [Watch Video](https://youtu.be/55aAkeafl3c)
 - **Source Code:** [GitHub Repository](https://github.com/Harshit-RV/docvault)
