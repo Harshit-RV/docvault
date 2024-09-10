@@ -321,5 +321,3 @@ function FileCard({ file, deleteFile }) {
 }
 
 export default MyFiles
-
-// App.jsx or any component file
