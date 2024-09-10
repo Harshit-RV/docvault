@@ -4,8 +4,14 @@ import { Button } from "@/components/ui/button";
 import { useParams } from 'react-router-dom';
 import { pinJsonToIPFS } from '@/utils/uploadJsonToIpfs';
 import { mintNFT } from '@/contract/methods';
+import { payToMint2 } from '@/contract/methods';
+import useWallet from '@/hooks/useWallet';
+import { toast } from 'react-toastify';
+import { deleteNewDocumentRequestSendMethod } from '@/contract/vault/methods2';
+import 'react-toastify/dist/ReactToastify.css'
 
 const jsonData = {
+
   description: "For testing docVault",
   image: "https://media.disneylandparis.com/d4th/en-usd/images/HD13302_2_2050jan01_world_disneyland-park-dlp-website-visual_5-2_tcm1861-248638.jpg?w=1920&f=webp",
   name: "Disney Castle",
@@ -20,6 +26,7 @@ const CertificateForm = () => {
   const { userAddress, requestId, docType } = useParams();
   const walletAddress = localStorage.getItem('walletAddress');
   const [metadataUri, setMetadataUri] = useState('');
+  const {signer} = useWallet();
 
   const [formData, setFormData] = useState({
     documentType: `${docType}`,
@@ -102,7 +109,7 @@ const CertificateForm = () => {
         data: fileData,
         headers: {
           Authorization: `Bearer ${import.meta.env.VITE_PINATA_JWT}`,
-        }        
+      }      
       });
   
       const imageIpfsUrl = 'https://gateway.pinata.cloud/ipfs/' + imageUploadResponse.data.IpfsHash;
@@ -118,6 +125,8 @@ const CertificateForm = () => {
           { trait_type: "Creator", value: "docVault" },
           { trait_type: "Owner", value: formData.recipientName },
           { trait_type: "Date Of Issue", value: formData.dateOfIssue },
+          { trait_type: "Org ID", value: walletAddress
+           },
         ],
       };
   
@@ -136,6 +145,26 @@ const CertificateForm = () => {
       console.error('Error generating or uploading image and metadata:', error);
     }
   };
+  const handleMint = async () => {
+    try {
+      await toast.promise(
+        payToMint2(signer, userAddress, metadataUri),
+        {
+          pending: 'minting NFT...',
+          success: 'NFT minted successfully',
+        }
+      );
+      await toast.promise(
+        deleteNewDocumentRequestSendMethod(signer, requestId),{
+          pending: 'Deleting request...',
+          success: 'Request deleted successfully',
+        }
+      );
+    } catch (error) {
+      console.error('Error minting NFT:', error);
+      toast.error('Error minting NFT. Please try again.');
+    }
+  }
   
 
   return (
@@ -326,7 +355,7 @@ const CertificateForm = () => {
       )}
 
       <Button className="w-full bg-primaryGreen text-white" onClick={handleGenerateAndUpload}> Generate Certificate </Button>
-      <Button onClick={()=>mintNFT(walletAddress,userAddress,metadataUri)}> Mint NFT </Button>
+      <Button onClick={handleMint}> Mint NFT </Button>
     </div>
   );
 };
