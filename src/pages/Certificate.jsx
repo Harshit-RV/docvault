@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Button } from "@/components/ui/button";
 import { useParams } from 'react-router-dom';
 import { pinJsonToIPFS } from '@/utils/uploadJsonToIpfs';
+import { mintNFT } from '@/contract/methods';
 
 const jsonData = {
   description: "For testing docVault",
@@ -17,6 +18,8 @@ const jsonData = {
 
 const CertificateForm = () => {
   const { userAddress, requestId, docType } = useParams();
+  const walletAddress = localStorage.getItem('walletAddress');
+  const [metadataUri, setMetadataUri] = useState('');
 
   const [formData, setFormData] = useState({
     documentType: `${docType}`,
@@ -125,6 +128,7 @@ const CertificateForm = () => {
       // Fetch and log the metadata to confirm it's correctly uploaded
       const metadata = await fetchMetadataFromIPFS(ipfsResponse);
       console.log('Fetched Metadata from IPFS:', metadata);
+      setMetadataUri(ipfsResponse);
   
       // You can handle further steps or UI updates here if needed.
   
@@ -322,6 +326,7 @@ const CertificateForm = () => {
       )}
 
       <Button className="w-full bg-primaryGreen text-white" onClick={handleGenerateAndUpload}> Generate Certificate </Button>
+      <Button onClick={()=>mintNFT(walletAddress,userAddress,metadataUri)}> Mint NFT </Button>
     </div>
   );
 };
