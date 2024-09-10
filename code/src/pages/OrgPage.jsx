@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react"
 import FileUpload from "@/components/FileUpload";
 import { ToastContainer, toast } from 'react-toastify';
@@ -217,18 +218,6 @@ function OrgPage() {
           </div>
         )}
 
-        <div className='flex gap-4 bg-[#1C1F2E] w-72 rounded-lg p-2 ml-14 mb-8'>
-            <Tab 
-                name="Approved" 
-                active={activeTab==="tab1"} 
-                onClick={()=>handleTabChange("tab1")} 
-            />
-            <Tab 
-                name="Pending" 
-                active={activeTab==="tab2"} 
-                onClick={()=>handleTabChange("tab2")} 
-            />
-        </div>
         <div className="grid grid-cols-4 gap-4 px-14">
         {files.map((file) => (
           <FileCard key={file.id} file={file} />
@@ -238,78 +227,17 @@ function OrgPage() {
   )
 }
 
-const Tab =(props)=> {
-  const tabClass = props.active ? 'bg-white' : 'bg-gray-500';
-  return(
-      <div className={`w-36 py-1 text-[15px] font-medium flex items-center justify-center rounded-md cursor-pointer ${tabClass}`} onClick={props.onClick}>
-          {props.name}
-      </div>
-
-  )
-}
-
-function FileCard({ file, deleteFile }) {
-    const [showOptions, setShowOptions] = useState(false);
-    const [deletePopup, setDeletePopup] = useState(false);
-  
-    const toggleOptions = () => {
-      setShowOptions(!showOptions);
-    };
-  
-    const handleDelete = () => {
-      deleteFile(file.id);
-      setDeletePopup(false); 
-      setShowOptions(false); 
-    };
-  
+function FileCard({ url, name }) {
     return (
       <div className="relative bg-[#1C1F2E] p-4 rounded-lg text-white">
        
-        <img src={file.url} className="rounded mb-2" />
+        <img src={url} className="rounded mb-2" />
 
         <div className="flex justify-between items-start ">
-        <h3 className="font-semibold  truncate">{file.name}</h3>
-          <MoreVertical className="w-5 h-5 cursor-pointer" onClick={toggleOptions} />
+        <h3 className="font-semibold  truncate">{name}</h3>
         </div>
 
         {/* <p className="text-sm text-gray-400">{file.type} • {file.size}</p> */}
-  
-        {showOptions && (
-          <div className="absolute right-4 top-18 z-40 bg-gray-800 text-white rounded-md shadow-lg">
-            <button
-              className="block px-4 py-2 text-left w-full hover:bg-red-600 hover:rounded-md"
-              onClick={() => {setDeletePopup(true),setShowOptions(false)}} 
-            >
-              Delete
-            </button>
-          </div>
-        )}
-  
-        {deletePopup && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-gray-800 py-8 px-10 w-96 rounded-lg shadow-lg">
-              <h2 className="text-white font-semibold text-lg mb-4">Confirm Delete</h2>
-              <p className="text-gray-300 mb-4">
-                Are you sure you want to delete this file?
-              </p>
-              <div className="flex justify-end">
-                <Button
-                  onClick={() => setDeletePopup(false)} 
-                  variant="secondary"
-                  className="mr-2"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleDelete}
-                  className="bg-red-500 text-white font-medium hover:bg-red-600 transition-colors"
-                >
-                  Delete
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     );
   }

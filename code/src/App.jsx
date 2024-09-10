@@ -13,6 +13,7 @@ import Header from './pages/Header';
 import IpfsHash from './pages/ipfshash'
 import Firepage from './pages/Firepage';
 import PredictionForm from './pages/Prediction';
+import HomePage from './pages/HomePage';
 
 function App() {
   return (
@@ -21,9 +22,10 @@ function App() {
       <HeaderWithConditionalRendering />
 
         <Routes>
-          <Route path='/' element={<TestPage />} />
-          <Route path='/firepage' element={<Firepage />} />
-          <Route path='prediction' element={<PredictionForm/>}/>
+          <Route path='/' element={<HomePage />} />
+          {/* <Route path='/firepage' element={<Firepage />} /> */}
+          {/* <Route path='/prediction' element={<PredictionForm/>}/> */}
+          
           <Route path="/myfiles" element={<MyFiles />} />
           <Route path="/verifydocs" element={<VerifyDocs />} />
           <Route path='/login' element={<Login />}/>
@@ -37,8 +39,8 @@ function App() {
           <Route path='/requests' element={<Requests />} />1
           <Route path="/org/:orgAddress" element={<OrgPage/>} />
           <Route path='/members' element={<Members />} />
-          <Route path='/copy' element={<Copy/>}/>
-          <Route path='/ipfshash' element={<IpfsHash/>}/>
+          {/* <Route path='/copy' element={<Copy/>}/> */}
+          {/* <Route path='/ipfshash' element={<IpfsHash/>}/> */}
         </Routes>
     </BrowserRouter>
     </div>

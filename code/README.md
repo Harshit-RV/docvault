@@ -13,6 +13,20 @@ Streamlining the process of issuing verifiable onchain documents.
 Follow these steps to run the project locally:
 - Root directory: code/
 
+### Step 0
+
+1. Navigate to the `code` directory:
+
+    ```bash
+    cd code
+    ```
+
+2. Install all dependencies:
+
+    ```bash
+    npm i
+    ```
+
 ### Step 1: Start the Server
 
 1. Navigate to the `server` directory:
