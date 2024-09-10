@@ -11,6 +11,7 @@ Streamlining the process of issuing verifiable onchain documents.
 ## Running the Project Locally
 
 Follow these steps to run the project locally:
+- Root directory: code/
 
 ### Step 1: Start the Server
 
