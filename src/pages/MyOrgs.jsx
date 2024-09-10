@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PlusIcon } from 'lucide-react'
-import { getUserNameMethod, getUserOrganizationsMethod, getOrgNameMethod } from "../contract/vault/methods"
+import { getUserOrganizationsMethod, getOrgNameMethod } from "../contract/vault/methods"
 import { requestToJoinOrgSendMethod } from "../contract/vault/methods2"
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
