@@ -121,9 +121,7 @@ export default function Component() {
           }
           {
             orgsLoading || orgs === undefined 
-            ? <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
-                <span className='font-bold text-2xl'>Loading...</span>
-              </div>
+            ? null
             : orgs.length === 0
               ? (
                 <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>

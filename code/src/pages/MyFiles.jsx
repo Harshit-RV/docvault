@@ -8,18 +8,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { getAllNFTs } from '../contract/methods';
 import { useQuery } from 'react-query';
-import{ useEffect } from 'react';
-
-function extractIpfsHash(ipfsString) {
-  if (typeof ipfsString !== 'string' || !ipfsString.startsWith('ipfs:/')) {
-      throw new Error('Invalid IPFS URI format');
-  }
-
-  const ipfsHash = ipfsString.replace('ipfs:/', '');
-  
-  return ipfsHash;
-}
-
+import { useEffect } from 'react';
+import { fetchMetadataFromIPFS } from '../utils/fetchMetadataFromIPFS';
+import { extractIpfsHash } from '../utils/extractIpfsHash';
 
 function MyFiles() {
   const [ activeTab, setActiveTab ] = useState("tab1");
@@ -138,7 +129,7 @@ function MyFiles() {
   const fetchFiles = async () => {
     const walletAddress = localStorage.getItem('walletAddress');
     const result = await getAllNFTs(walletAddress);
-    const tokenPromises = result.map(async (token, index) => {
+    const tokenPromises = result.map(async (token) => {
         const hash = extractIpfsHash(token.tokenURI)
         const metadata = await fetchMetadataFromIPFS(hash);
         return { ...token, metadata };
@@ -148,27 +139,6 @@ function MyFiles() {
     console.log('all files: ', tokensWithMetadata);
     return tokensWithMetadata;
   }
-
-  const fetchMetadataFromIPFS = async (ipfsHash) => {
-    try {
-      const metadataUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
-      console.log('Fetching metadata from IPFS:', metadataUrl);
-  
-      // Fetch the metadata JSON directly and parse it
-      const response = await fetch(metadataUrl);
-      
-      // Check if the response is okay, then parse it as JSON
-      if (!response.ok) {
-        throw new Error('Failed to fetch metadata');
-      }
-  
-      const metadata = await response.json();  // This is the parsed JSON
-      return metadata;  // Return the parsed JSON metadata
-    } catch (error) {
-      console.error('Error fetching metadata from IPFS:', error);
-      return null;
-    }
-  };
 
   const { data: filesData, isLoading: filesLoading, refetch: filesRefetch } = useQuery(`my-user-orgs-`, fetchFiles, { enabled: false });
 

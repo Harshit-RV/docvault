@@ -3,9 +3,7 @@ import { useState, useEffect } from "react"
 import FileUpload from "@/components/FileUpload";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { FileIcon, MoreVertical } from 'lucide-react'
 import { useParams } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Select,
@@ -18,6 +16,11 @@ import { getOrgNameMethod } from "@/contract/vault/methods";
 import { addNewDocumentRequestSendMethod } from "@/contract/vault/methods2";
 import useWallet from '@/hooks/useWallet';
 import { v4 as uuidv4 } from 'uuid';
+import { getAllNFTs } from '../contract/methods';
+import { fetchMetadataFromIPFS } from '../utils/fetchMetadataFromIPFS';
+import { extractIpfsHash } from '../utils/extractIpfsHash';
+import { useQuery } from 'react-query';
+import { FileCard } from './MyFiles';
 
 function OrgPage() {
   const { address, signer } = useWallet(); 
@@ -42,14 +45,6 @@ function OrgPage() {
   useEffect(() => {
     getNameFromAddress();
   },[]);
-
-  const [ files, setFiles ] = useState([
-    { id: 1, name: 'Example File.pdf', type: 'PDF', size: '2.5 MB', url:'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
-    { id: 2, name: 'Document.docx', type: 'DOCX', size: '1.8 MB',  url:'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg'},
-    { id: 3, name: 'Image.jpg', type: 'JPG', size: '3.2 MB',  url:'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
-    { id: 4, name: 'Spreadsheet.xlsx', type: 'XLSX', size: '1.1 MB',  url:'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg' },
-    { id: 5, name: 'Presentation.pptx', type: 'PPTX', size: '4.7 MB',  url:'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg'},
-  ]);
 
   const handlePopupTabChange = (tabName) => {
     setPopupTab(tabName);
@@ -98,14 +93,37 @@ function OrgPage() {
     }
   };
 
+
+  const fetchFiles = async () => {
+    const walletAddress = localStorage.getItem('walletAddress');
+    const result = await getAllNFTs(walletAddress);
+    const tokenPromises = result.map(async (token) => {
+        const hash = extractIpfsHash(token.tokenURI)
+        const metadata = await fetchMetadataFromIPFS(hash);
+        return { ...token, metadata };
+    });
+
+    const tokensWithMetadata = await Promise.all(tokenPromises);
+
+    const final = tokensWithMetadata.filter((token) => token.metadata.attributes[2].value === orgAddress);
+    return final;
+  }
+
+  const { data: filesData, isLoading: filesLoading, refetch: filesRefetch } = useQuery(`org-${orgAddress}`, fetchFiles, { enabled: false });
+
+  useEffect(() => {
+    filesRefetch();
+  }, [])
+
+
   return (
     <div className="bg-gray-900 h-screen px-12">
-        <div className="flex justify-between pt-12 pl-14 pr-14 items-center mb-4">
-            <h1 className="text-white font-bold text-3xl">Welcome to {orgName}</h1>
+        <div className="flex justify-between pt-12 px-6 items-center mb-6">
+            <h1 className="text-white font-bold text-3xl">{orgName}</h1>
             <ToastContainer />
             <button 
               onClick={handlePopup}
-              className='mt-8 bg-[#27E8A7] w-auto text-black font-bold py-2 px-6 rounded-md hover:bg-[#20C08F] transition-colors'>
+              className='bg-[#27E8A7] w-auto text-black font-bold py-2 px-6 rounded-md hover:bg-[#20C08F] transition-colors'>
               New File
             </button>
         </div>
@@ -218,29 +236,30 @@ function OrgPage() {
           </div>
         )}
 
-        <div className="grid grid-cols-4 gap-4 px-14">
-        {files.map((file) => (
-          <FileCard key={file.id} file={file} />
-        ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4">
+        {
+          filesLoading && (
+            <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
+              <span className='font-bold text-2xl'>Loading...</span>
+            </div>
+          ) 
+        }
+        {
+          filesLoading || filesData === undefined 
+          ? null
+          : filesData.length === 0
+            ? (
+              <div className='w-full rounded-2xl px-3 py-4 text-gray-400 gap-2 justify-between flex'>
+                <span className='font-bold text-2xl'>No Files</span>
+              </div>
+            ): (
+              filesData.map((file, index) => (
+                <FileCard key={index} name={file.metadata.name} imageUrl={file.metadata.image} />
+              ))
+            )
+        }
       </div>
     </div>
   )
 }
-
-function FileCard({ url, name }) {
-    return (
-      <div className="relative bg-[#1C1F2E] p-4 rounded-lg text-white">
-       
-        <img src={url} className="rounded mb-2" />
-
-        <div className="flex justify-between items-start ">
-        <h3 className="font-semibold  truncate">{name}</h3>
-        </div>
-
-        {/* <p className="text-sm text-gray-400">{file.type} • {file.size}</p> */}
-      </div>
-    );
-  }
-  
-
 export default OrgPage
