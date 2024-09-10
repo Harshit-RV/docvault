@@ -12,6 +12,20 @@ import { useQuery } from 'react-query';
 import { fetchJsonFromIPFS } from "@/utils/fetchJsonFromIpfs";
 import React, { useEffect } from 'react';
 
+function extractIpfsHash(ipfsString) {
+  // Check if the input is a valid string and starts with "ipfs:/"
+  if (typeof ipfsString !== 'string' || !ipfsString.startsWith('ipfs:/')) {
+      throw new Error('Invalid IPFS URI format');
+  }
+
+  // Extract the hash by removing the "ipfs:/" prefix
+  const ipfsHash = ipfsString.replace('ipfs:/', '');
+  
+  // Return the IPFS hash
+  return ipfsHash;
+}
+
+
 function MyFiles() {
   const [activeTab, setActiveTab] = useState("tab1");
   const [popup, setPopup] = useState(false);
@@ -110,16 +124,25 @@ function MyFiles() {
   const fetchFiles = async () => {
     const walletAddress = localStorage.getItem('walletAddress');
     const result = await getAllNFTs(walletAddress);
-    // "ipfs://QmZA6dUoe6CDAbhnxBWJVo79GqscPFxYrbCf3YaVNvDwxv"
-    const res = await fetchMetadataFromIPFS('QmSxWzVwpTsQEDy8KxGXLbJhTf9W81irnaNbgXM4E1TDCp');
-    console.log('all files content: ', res);
-    console.log('all files: ', result);
-    return result;
+    const tokenPromises = result.map(async (token) => {
+        const hash = extractIpfsHash(token.tokenURI)
+        const metadata = await fetchMetadataFromIPFS(hash);
+        console.log('metadata: ', metadata);
+        // return { ...token, metadata };
+    });
+
+    const tokensWithMetadata = await Promise.all(tokenPromises);
+    // // "ipfs://QmZA6dUoe6CDAbhnxBWJVo79GqscPFxYrbCf3YaVNvDwxv"
+    // const res = await fetchMetadataFromIPFS('QmSxWzVwpTsQEDy8KxGXLbJhTf9W81irnaNbgXM4E1TDCp');
+    // console.log('all files content: ', res);
+    console.log('all files: ', tokensWithMetadata);
+    return tokensWithMetadata;
   }
 
   const fetchMetadataFromIPFS = async (ipfsHash) => {
     try {
-      const metadataUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
+      // const metadataUrl = `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
+      const metadataUrl = `https://ipfs.io/ipfs/QmSxWzVwpTsQEDy8KxGXLbJhTf9W81irnaNbgXM4E1TDCp`;
   
       const response = await fetch(metadataUrl);
       
@@ -127,121 +150,124 @@ function MyFiles() {
         throw new Error('Failed to fetch metadata');
       }
   
-      const metadata = await response.json();
-      return JSON.parse(metadata);
+      const metadata = await response;
+      return metadata;
     } catch (error) {
       console.error('Error fetching metadata from IPFS:', error);
       return null;
     }
   };
 
-  const { data: orgs, isLoading: orgsLoading } = useQuery('user-orgs2', fetchFiles);
+  const { data: filesData, isLoading: filesLoading, refetch: filesRefetch } = useQuery('user-orgs2', fetchFiles, { enabled: false });
 
+  useEffect(() => {
+    filesRefetch();
+  }, []);
 
   return (
-    <div className="bg-[#0D111D] h-screen px-12">
-    <div className="flex justify-between pt-12 pl-14 pr-14 items-center mb-4">
-      <h1 className="text-white font-bold text-3xl">My Files</h1>
-      <ToastContainer />
-      <button
-        onClick={handlePopup}
-        className="mt-8 bg-[#27E8A7] w-auto text-black font-bold py-2 px-6 rounded-md hover:bg-[#20C08F] transition-colors"
-      >
-        New File
-      </button>
+    <div className="bg-[#0D111D] h-full min-h-screen px-12">
+      <div className="flex justify-between pt-12 px-4 mb-3 items-center">
+        <h1 className="text-white font-bold text-3xl">My Files</h1>
+        <ToastContainer />
+        <button
+          onClick={handlePopup}
+          className="bg-[#27E8A7] w-auto text-black font-bold py-2 px-6 rounded-md hover:bg-[#20C08F] transition-colors"
+        >
+          New File
+        </button>
+      </div>
+
+      {popup && (
+        <Dialog open={popup} onOpenChange={setPopup}>
+          <DialogTitle></DialogTitle>
+          <DialogContent className="bg-gray-900 border-none text-white py-7 px-8 max-w-[52vh] overflow-auto">
+            <div className="flex mb-8 gap-2 h-80">
+              <Tabs defaultValue={popupTab}>
+                <TabsList className="grid h-min grid-cols-2 mb-[5vh] bg-gray-600 text-white">
+                  <TabsTrigger value="requestNewFile" className=" text-sm flex items-center justify-center">
+                    Request New File
+                  </TabsTrigger>
+                  <TabsTrigger value="requestVerification" className=" text-sm flex items-center justify-center">
+                    Request Verification
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="requestNewFile">
+                  <form>
+                    <div className="mb-8 w-[40vh]">
+                      <label className="block text-gray-300 font-semibold">Document Type</label>
+                      <select className="w-full border border-gray-300 p-2 mt-2 px-2 rounded-md">
+                        <option value="">Select Document</option>
+                        <option value="document1">Bonafide Certificate</option>
+                        <option value="document2">Merit Award Certificate</option>
+                      </select>
+                    </div>
+
+                    <div className="mb-8">
+                      <label className="block text-gray-300 font-semibold">Organization</label>
+                      <select className="w-full border border-gray-300 p-2 mt-2 rounded-md">
+                        <option value="">Select Organization</option>
+                        <option value="org1">Netaji Subhas University of Technology</option>
+                      </select>
+                    </div>
+
+                    <div className="flex justify-end">
+                      <button type="submit" className="bg-primaryGreen text-black font-medium px-4 py-2 rounded">
+                        Request
+                      </button>
+                    </div>
+                  </form>
+                </TabsContent>
+
+                <TabsContent value="requestVerification">
+                  <form>
+                    <div className="mb-4  w-[40vh]">
+                      <div className="flex justify-between justify-content items-center">
+                      <label className="block text-gray-300 font-semibold">Upload File</label>
+                      {
+                        success=="true"?
+                        <div className="text-green-600">File Uploaded</div>: success==="false"?
+                        <div className=" text-red-600"> File Not Uploaded</div>: <div></div>
+                                            }</div>
+                      <FileUpload type="file" onChange={handleFileChange} />
+                    </div>
+
+                    <div className="flex justify-end">
+                      <button type="submit" className="bg-primaryGreen text-black font-medium px-4 py-2 rounded">
+                        Submit
+                      </button>
+                    </div>
+                  </form>
+                </TabsContent>
+              </Tabs>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-4">
+        {files.map((file) => (
+          <FileCard key={file.id} file={file} />
+        ))}
+      </div>
     </div>
-
-    {popup && (
-      <Dialog open={popup} onOpenChange={setPopup}>
-        <DialogTitle></DialogTitle>
-        <DialogContent className="bg-gray-900 border-none text-white py-7 px-8 max-w-[52vh] overflow-auto">
-          <div className="flex mb-8 gap-2 h-80">
-            <Tabs defaultValue={popupTab}>
-              <TabsList className="grid h-min grid-cols-2 mb-[5vh] bg-gray-600 text-white">
-                <TabsTrigger value="requestNewFile" className=" text-sm flex items-center justify-center">
-                  Request New File
-                </TabsTrigger>
-                <TabsTrigger value="requestVerification" className=" text-sm flex items-center justify-center">
-                  Request Verification
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="requestNewFile">
-                <form>
-                  <div className="mb-8 w-[40vh]">
-                    <label className="block text-gray-300 font-semibold">Document Type</label>
-                    <select className="w-full border border-gray-300 p-2 mt-2 px-2 rounded-md">
-                      <option value="">Select Document</option>
-                      <option value="document1">Bonafide Certificate</option>
-                      <option value="document2">Merit Award Certificate</option>
-                    </select>
-                  </div>
-
-                  <div className="mb-8">
-                    <label className="block text-gray-300 font-semibold">Organization</label>
-                    <select className="w-full border border-gray-300 p-2 mt-2 rounded-md">
-                      <option value="">Select Organization</option>
-                      <option value="org1">Netaji Subhas University of Technology</option>
-                    </select>
-                  </div>
-
-                  <div className="flex justify-end">
-                    <button type="submit" className="bg-primaryGreen text-black font-medium px-4 py-2 rounded">
-                      Request
-                    </button>
-                  </div>
-                </form>
-              </TabsContent>
-
-              <TabsContent value="requestVerification">
-                <form>
-                  <div className="mb-4  w-[40vh]">
-                    <div className="flex justify-between justify-content items-center">
-                    <label className="block text-gray-300 font-semibold">Upload File</label>
-                    {
-                      success=="true"?
-                      <div className="text-green-600">File Uploaded</div>: success==="false"?
-                       <div className=" text-red-600"> File Not Uploaded</div>: <div></div>
-                                          }</div>
-                    <FileUpload type="file" onChange={handleFileChange} />
-                  </div>
-
-                  <div className="flex justify-end">
-                    <button type="submit" className="bg-primaryGreen text-black font-medium px-4 py-2 rounded">
-                      Submit
-                    </button>
-                  </div>
-                </form>
-              </TabsContent>
-            </Tabs>
-          </div>
-        </DialogContent>
-      </Dialog>
-    )}
-
-    <div className="grid grid-cols-4 gap-4 px-14">
-      {files.map((file) => (
-        <FileCard key={file.id} file={file} />
-      ))}
-    </div>
-  </div>
 );
 }
 
 
 function FileCard({ file, deleteFile }) {
-  const [showOptions, setShowOptions] = useState(false);
-  const [deletePopup, setDeletePopup] = useState(false);
+  // const [showOptions, setShowOptions] = useState(false);
+  // const [deletePopup, setDeletePopup] = useState(false);
 
-  const toggleOptions = () => {
-    setShowOptions(!showOptions);
-  };
+  // const toggleOptions = () => {
+  //   setShowOptions(!showOptions);
+  // };
 
-  const handleDelete = () => {
-    deleteFile(file.id);
-    setDeletePopup(false); 
-    setShowOptions(false); 
-  };
+  // const handleDelete = () => {
+  //   deleteFile(file.id);
+  //   setDeletePopup(false); 
+  //   setShowOptions(false); 
+  // };
 
   return (
     <div className="relative bg-[#1C1F2E] p-4 rounded-lg text-white">
@@ -249,12 +275,12 @@ function FileCard({ file, deleteFile }) {
     <img src={file.url} className="rounded mb-2" />
 
     <div className="flex justify-between items-start ">
-    <h3 className="font-semibold  truncate">{file.name}</h3>
-      <MoreVertical className="w-5 h-5 cursor-pointer" onClick={toggleOptions} />
+    <h3 className="text-md truncate">{file.name}</h3>
+      {/* <MoreVertical className="w-5 h-5 cursor-pointer" onClick={toggleOptions} /> */}
     </div>
       
 
-      {showOptions && (
+      {/* {showOptions && (
         <div className="absolute right-4 top-18 z-30 bg-gray-800 text-white rounded-md shadow-lg">
           <button
             className="block px-4 py-2 text-left w-full hover:bg-red-600 hover:rounded-md"
@@ -263,9 +289,9 @@ function FileCard({ file, deleteFile }) {
             Delete
           </button>
         </div>
-      )}
+      )} */}
 
-      {deletePopup && (
+      {/* {deletePopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-gray-800 py-8 px-10 w-96 rounded-lg shadow-lg">
             <h2 className="text-white font-semibold text-lg mb-4">Confirm Delete</h2>
@@ -289,7 +315,7 @@ function FileCard({ file, deleteFile }) {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
