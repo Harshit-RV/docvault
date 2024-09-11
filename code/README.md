@@ -1,3 +1,4 @@
+
 # DocVault
 
 Streamlining the process of issuing verifiable onchain documents.
@@ -11,9 +12,9 @@ Streamlining the process of issuing verifiable onchain documents.
 ## Running the Project Locally
 
 Follow these steps to run the project locally:
-- Root directory: code/
+- Root directory: `code/`
 
-### Step 0
+### Step 0: Set Up Python Virtual Environment
 
 1. Navigate to the `code` directory:
 
@@ -21,10 +22,36 @@ Follow these steps to run the project locally:
     cd code
     ```
 
-2. Install all dependencies:
+2. Create a virtual environment. Replace `venv` with your preferred environment name if desired:
 
     ```bash
-    npm i
+    python -m venv venv
+    ```
+
+3. Activate the virtual environment:
+
+    - On Windows:
+
+        ```bash
+        venv\Scripts\activate
+        ```
+
+    - On macOS/Linux:
+
+        ```bash
+        source venv/bin/activate
+        ```
+
+4. Install Python dependencies from `requirements.txt`:
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+5. Install Node.js dependencies:
+
+    ```bash
+    npm install
     ```
 
 ### Step 1: Start the Server
